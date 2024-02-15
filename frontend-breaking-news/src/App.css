@@ -1,0 +1,227 @@
+* {
+  font-family: 'Amazon Ember', sans-serif;
+}
+
+/* ::-webkit-scrollbar {
+  display: none;
+} */
+
+body{
+margin: 0;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
+.login-header{
+  background: #04273A;
+  height: 79px;
+  display: flex;
+  justify-content: space-between;
+  color: #fff;
+  padding: 0 40px;
+}
+
+.login{
+  background: #EEEEF3;
+  position: absolute;
+  width: 100vw;
+  margin-right: 10px;
+  display: 'none';
+}
+
+.card::-webkit-scrollbar{
+  display:none
+}
+
+.header-text{
+  margin-top: -35px;
+  margin-left: 105px;
+}
+.user-profile{
+  width: 14%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  align-content: center;
+  gap: 16px;
+}
+.full-page {
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+}
+.logo-img{
+  margin-top: 12px;
+}
+
+.icon-img,.drop-icon-img{
+width: 25px;
+}
+
+
+.dropdown-text{
+  font-size: 16px;
+  margin-top: 29px;
+}
+
+
+.bottom-text{
+  font-size: 16px;
+  color: #9BA7B6;
+  margin-bottom: 10px;
+}
+.xenon-logo{
+  margin-left: 106px;
+  margin-top: -36px;
+  position: absolute;
+}
+
+.scrollbar-section{
+  margin-left: 17px;
+  padding-top: 22px;
+}
+
+.tab-bar{
+  margin-left: 44px;
+  margin-top: 50px;
+}
+
+.scroll-menu{
+  margin-left: -20px;
+}
+
+.drop-button{
+  position: absolute;
+  margin-top: -41px;
+}
+
+.long-button{
+  margin-left: 10px;
+}
+
+.text-area{
+  background: #fff;
+  padding-left: 20px;
+  padding-top: 37px;
+  width: 2129px;
+}
+
+.text-area-container{
+  background: #fff;
+  width: 2217px;
+  height: 284px;
+  border-radius: 8px;
+}
+
+.small-button{
+  margin-left: 2033px;
+  margin-top: 42px;
+}
+
+.large-text-area-container{
+  background: #fff;
+  width: 2217px;
+  height: 480px;
+  border-radius: 10px;
+}
+
+.large-text-area{
+  background: #fff;
+  padding-left: 20px;
+  padding-top: 20px;
+  width: 2129px;
+}
+
+.normal-button-in-textarea{
+  margin-left: 2042px;
+  margin-top: -405px;
+}
+
+.top-button-personalised-section{
+  margin-left: 1982px;
+  margin-top: -1034px;
+}
+
+.checkbox{
+  margin-left: 2068px;
+  position: absolute;
+  margin-top: 10px;
+}
+.scroll-header{
+  padding-top: 70px;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: bold;
+  }
+
+  .card-content {
+    font-size: 14px;
+    margin-top: -26px;
+}
+
+.card-bottom-text{
+  color:#9BA7B6;
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: -8px;
+}
+
+.card-date{
+  color:#9BA7B6;
+  font-size: 14px;
+  padding-bottom: 10px;
+  
+}
+
+.user-card-title{
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 15px;
+}
+
+.user-image{
+  margin-left: 28px;
+  margin-top: 19px;
+  padding-bottom: 11px;
+}
+
+.user-card-checkbox{
+ margin-left: 128px;
+    margin-top: -22px;
+}
+
+.second-tab{
+  margin-top: 45px;
+}
+
+.interested-users{
+  margin-top: 78px;
+}
+
+.Viewed-Articles{
+  margin-top: 78px;
+}
+
+.login-header-logo{
+  display: flex;
+}
+
+.gen-ai-header{
+  margin-top: 46px;
+}
+
+.user-icon{
+  margin-top: 26px;
+  margin-left: 2166px;
+  position: absolute;
+}
+
+.personalised-newsletter-text{
+  margin-top: 56px;
+}
+

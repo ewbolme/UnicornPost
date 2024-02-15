@@ -1,0 +1,320 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: "AWS::Serverless-2016-10-31"
+Parameters:
+  bucketName:
+    Description: "S3 Bucket Name"
+    Type: "String"
+
+  backendBucketName:
+    Type: "String"
+    Description: "Bucket Nmae for Backend Go Lambda"
+
+  campaignName1:
+    Type: "String"
+    Description: "Personalize Campaign Name"
+
+  campaignName2:
+    Type: "String"
+    Description: "Personalize Campaign Name"
+
+  filterName:
+    Type: "String"
+    Description: "Personalize Filter Name"
+
+  kmeansEndpointName:
+    Type: "String"
+    Description: "Sagemaker Endpoint Name"
+
+  cognitoDomainName:
+    Type: "String"
+    Description: "Cognito Domain Name"
+
+  clusterEventTracker:
+    Type: "String"
+    Description: "Cluster Event Tracker ID"
+
+  oneToOneEventTracker:
+    Type: "String"
+    Description: "One To One Event Tracker ID"
+
+  
+
+
+Resources:
+  codeCommit:
+    Type: "AWS::Serverless::Application"
+    Properties:
+      Location: "./resources/stage1/codecommit.yaml"
+      TimeoutInMinutes: 60
+      Parameters:
+        bucketName: !Ref "bucketName"
+
+
+  policy:
+    Type: "AWS::Serverless::Application"
+    Properties:
+      Location: "./resources/stage1/policy.yaml"
+      TimeoutInMinutes: 60
+      Parameters:
+        repoArn: !GetAtt ["codeCommit", "Outputs.repoArn"]
+
+
+  role:
+    Type: "AWS::Serverless::Application"
+    Properties:
+      Location: "./resources/stage1/role.yaml"
+      TimeoutInMinutes: 60
+      Parameters:
+        amplifyPolicy: !GetAtt ["policy", "Outputs.amplifyPolicy"]
+        lambdaPolicy: !GetAtt ["policy", "Outputs.lambdaPolicy"]
+        tableCreationPolicy: !GetAtt ["policy", "Outputs.tableCreationPolicy"]
+        webSocketLambdaPolicy: !GetAtt ["policy", "Outputs.webSocketLambdaPolicy"]
+        manageConnectionPolicy: !GetAtt ["policy", "Outputs.manageConnectionPolicy"]
+
+
+  kinesis:
+    Type: "AWS::Serverless::Application"
+    Properties:
+      Location: "./resources/stage1/kinesis.yaml"
+      TimeoutInMinutes: 60
+
+
+  lambdaLayer:
+    Type: "AWS::Serverless::Application"
+    Properties:
+      Location: "./resources/stage1/lambda_layer.yaml"
+      TimeoutInMinutes: 60
+
+
+  lambda:
+    Type: "AWS::Serverless::Application"
+    Properties:
+      Location: "./resources/stage1/lambdas.yaml"
+      TimeoutInMinutes: 60
+      Parameters:
+        lambdaRoleArn: !GetAtt ["role", "Outputs.lambdaRoleArn"]
+        lambdaLayer: !GetAtt ["lambdaLayer", "Outputs.lambdaLayer"]
+        kinesisStream: !GetAtt ["kinesis", "Outputs.kinesisStream"]
+        lambdaSecurityGroupId: !GetAtt ["securityGroup", "Outputs.lambdaSecurityGroupId"]
+        privateSubnetId1: !GetAtt ["network", "Outputs.privateSubnetId1"]
+        privateSubnetId2: !GetAtt ["network", "Outputs.privateSubnetId2"]
+        privateSubnetId3: !GetAtt ["network", "Outputs.privateSubnetId3"]
+        campaignName1: !Ref "campaignName1"
+        campaignName2: !Ref "campaignName2"
+        filterName: !Ref "filterName"
+        kmeansEndpointName: !Ref "kmeansEndpointName"
+        clusterEventTracker: !Ref "clusterEventTracker"
+        oneToOneEventTracker: !Ref "oneToOneEventTracker"
+
+
+  apiGateway:
+    Type: "AWS::Serverless::Application"
+    Properties:
+      Location: "./resources/stage1/apigateway.yaml"
+      TimeoutInMinutes: 60
+      Parameters:
+        lambdaFunction1: !GetAtt ["lambda", "Outputs.lambdaFunction1"]
+        lambdaFunction2: !GetAtt ["lambda", "Outputs.lambdaFunction2"]
+        lambdaFunction3: !GetAtt ["lambda", "Outputs.lambdaFunction3"]
+        lambdaFunction4: !GetAtt ["lambda", "Outputs.lambdaFunction4"]
+        lambdaFunction5: !GetAtt ["lambda", "Outputs.lambdaFunction5"]
+        lambdaFunction6: !GetAtt ["lambda", "Outputs.lambdaFunction6"]
+        lambdaFunction7: !GetAtt ["lambda", "Outputs.lambdaFunction7"]
+        lambdaFunction8: !GetAtt ["lambda", "Outputs.lambdaFunction8"]
+
+    
+  apiDeployment:
+    Type: "AWS::Serverless::Application"
+    Properties:
+      Location: "./resources/stage1/apideployment.yaml"
+      TimeoutInMinutes: 60
+      Parameters:
+        apiGatewayRestApi: !GetAtt ["apiGateway", "Outputs.apiGatewayRestApi"]
+
+
+  lambdaPermission:
+    Type: "AWS::Serverless::Application"
+    Properties:
+      Location: "./resources/stage1/lambda_permission.yaml"
+      TimeoutInMinutes: 60
+      Parameters:
+        kinesisStreamArn: !GetAtt ["kinesis", "Outputs.kinesisStreamArn"]
+        apiGatewayRestApi: !GetAtt ["apiGateway", "Outputs.apiGatewayRestApi"]
+        lambdaFunction1: !GetAtt ["lambda", "Outputs.lambdaFunction1"]
+        lambdaFunction2: !GetAtt ["lambda", "Outputs.lambdaFunction2"]
+        lambdaFunction3: !GetAtt ["lambda", "Outputs.lambdaFunction3"]
+        lambdaFunction4: !GetAtt ["lambda", "Outputs.lambdaFunction4"]
+        lambdaFunction5: !GetAtt ["lambda", "Outputs.lambdaFunction5"]
+        lambdaFunction6: !GetAtt ["lambda", "Outputs.lambdaFunction6"]
+        lambdaFunction7: !GetAtt ["lambda", "Outputs.lambdaFunction7"]
+        lambdaFunction8: !GetAtt ["lambda", "Outputs.lambdaFunction8"]
+        lambdaFunctionArn1: !GetAtt ["lambda", "Outputs.lambdaFunctionArn1"]
+        lambdaFunctionArn2: !GetAtt ["lambda", "Outputs.lambdaFunctionArn2"]
+        lambdaFunctionArn3: !GetAtt ["lambda", "Outputs.lambdaFunctionArn3"]
+        lambdaFunctionArn4: !GetAtt ["lambda", "Outputs.lambdaFunctionArn4"]
+        lambdaFunctionArn5: !GetAtt ["lambda", "Outputs.lambdaFunctionArn5"]
+        lambdaFunctionArn6: !GetAtt ["lambda", "Outputs.lambdaFunctionArn6"]
+        lambdaFunctionArn7: !GetAtt ["lambda", "Outputs.lambdaFunctionArn7"]
+        lambdaFunctionArn8: !GetAtt ["lambda", "Outputs.lambdaFunctionArn8"]
+        webSocketLambdaArn: !GetAtt ["goLambda", "Outputs.webSocketLambdaArn"]
+
+  
+  dynamoDB:
+    Type: "AWS::Serverless::Application"
+    Properties:
+      Location: "./resources/stage1/dynamodb.yaml"
+      TimeoutInMinutes: 60
+      Parameters:
+        bucketName: !Ref "bucketName"
+
+
+  amplify:
+    Type: "AWS::Serverless::Application"
+    Properties:
+      Location: "./resources/stage1/amplify.yaml"
+      TimeoutInMinutes: 60
+      Parameters:
+        repoName: !GetAtt ["codeCommit", "Outputs.repoName"]
+        cloneUrl: !GetAtt ["codeCommit", "Outputs.cloneUrl"]
+        amplifyRoleArn: !GetAtt ["role", "Outputs.amplifyRoleArn"]
+        apiGatewayRestApi: !GetAtt ["apiGatewayBackend", "Outputs.apiGatewayRestApi"]
+        apiGatewayV2Api: !GetAtt ["apiWebSocket", "Outputs.apiGatewayV2Api"]
+        apiGatewayStage: !GetAtt ["apiDeploymentBackend", "Outputs.apiGatewayStage"]
+        apiGatewayV2Stage: !GetAtt ["apiDeploymentBackend", "Outputs.apiGatewayV2Stage"]
+
+
+  goLambda:
+    Type: "AWS::Serverless::Application"
+    Properties:
+      Location: "./resources/stage2/lambdas.yaml"
+      TimeoutInMinutes: 60
+      Parameters:
+        lambdaLayer2: !GetAtt ["lambdaLayer", "Outputs.lambdaLayer2"]
+        golambdaRoleArn: !GetAtt ["role", "Outputs.golambdaRoleArn"]
+        tableCreationRoleArn: !GetAtt ["role", "Outputs.tableCreationRoleArn"]
+        webSocketLambdaRoleArn: !GetAtt ["role", "Outputs.webSocketLambdaRoleArn"]
+        apiGatewayRestApi: !GetAtt ["apiGateway", "Outputs.apiGatewayRestApi"]
+        apiGatewayStage: !GetAtt ["apiDeployment", "Outputs.apiGatewayStage"]
+        dbInstanceEndpoint: !GetAtt ["rds", "Outputs.dbInstanceEndpoint"]
+        redisCacheEndpoint: !GetAtt ["redis", "Outputs.redisCacheEndpoint"]
+        backendBucketName: !Ref "backendBucketName"
+        lambdaSecurityGroupId: !GetAtt ["securityGroup", "Outputs.lambdaSecurityGroupId"]
+        privateSubnetId1: !GetAtt ["network", "Outputs.privateSubnetId1"]
+        privateSubnetId2: !GetAtt ["network", "Outputs.privateSubnetId2"]
+        privateSubnetId3: !GetAtt ["network", "Outputs.privateSubnetId3"]
+        amplifyUrl: !GetAtt ["amplify", "Outputs.amplifyUrl"]
+
+
+  apiGatewayBackend:
+    Type: "AWS::Serverless::Application"
+    Properties:
+      Location: "./resources/stage2/apigateway.yaml"
+      TimeoutInMinutes: 60
+
+
+  apiWebSocket:
+    Type: "AWS::Serverless::Application"
+    Properties:
+      Location: "./resources/stage2/apigatewayv2.yaml"
+      TimeoutInMinutes: 60
+
+    
+  apiDeploymentBackend:
+    Type: "AWS::Serverless::Application"
+    Properties:
+      Location: "./resources/stage2/apideployment.yaml"
+      TimeoutInMinutes: 60
+      Parameters:
+        apiGatewayRestApi: !GetAtt ["apiGatewayBackend", "Outputs.apiGatewayRestApi"]
+        apiGatewayV2Api: !GetAtt ["apiWebSocket", "Outputs.apiGatewayV2Api"]
+
+
+  goLambdaPermission:
+    Type: "AWS::Serverless::Application"
+    Properties:
+      Location: "./resources/stage2/lambda_permission.yaml"
+      TimeoutInMinutes: 60
+      Parameters:
+        apiGatewayRestApi: !GetAtt ["apiGatewayBackend", "Outputs.apiGatewayRestApi"]
+        apiGatewayV2Api: !GetAtt ["apiWebSocket", "Outputs.apiGatewayV2Api"]
+        golambdaFunctionArn: !GetAtt ["goLambda", "Outputs.goLambdaFunctionArn"]
+        webSocketLambdaArn: !GetAtt ["goLambda", "Outputs.webSocketLambdaArn"]
+        customMessageForgotPasswordArn: !GetAtt ["goLambda", "Outputs.customMessageForgotPasswordArn"]
+        cognitoUserPoolId: !GetAtt ["cognito", "Outputs.cognitoUserPoolId"]
+
+
+  network:
+    Type: "AWS::Serverless::Application"
+    Properties:
+      Location: "./resources/stage2/network.yaml"
+      TimeoutInMinutes: 60
+
+
+  cognito:
+    Type: "AWS::Serverless::Application"
+    Properties:
+      Location: "./resources/stage2/cognito.yaml"
+      TimeoutInMinutes: 60
+      Parameters:
+        cognitoDomainName: !Ref "cognitoDomainName"
+
+  
+  kms:
+    Type: "AWS::Serverless::Application"
+    Properties:
+      Location: "./resources/stage2/kms.yaml"
+      TimeoutInMinutes: 60
+      Parameters:
+        cognitoUserPoolId: !GetAtt ["cognito", "Outputs.cognitoUserPoolId"]
+        userPoolClientId: !GetAtt ["cognito", "Outputs.userPoolClientId"]
+        userPoolClientSecret: !GetAtt ["cognito", "Outputs.userPoolClientSecret"]
+
+
+  securityGroup:
+    Type: "AWS::Serverless::Application"
+    Properties:
+      Location: "./resources/stage2/security_group.yaml"
+      TimeoutInMinutes: 60
+      Parameters:
+        vpcId: !GetAtt ["network", "Outputs.vpcId"]
+
+
+  rds:
+    Type: "AWS::Serverless::Application"
+    Properties:
+      Location: "./resources/stage2/rds.yaml"
+      TimeoutInMinutes: 60
+      Parameters:
+        vpcId: !GetAtt ["network", "Outputs.vpcId"]
+        privateSubnetId1: !GetAtt ["network", "Outputs.privateSubnetId1"]
+        privateSubnetId2: !GetAtt ["network", "Outputs.privateSubnetId2"]
+        privateSubnetId3: !GetAtt ["network", "Outputs.privateSubnetId3"]
+        rdsSecurityGroupId: !GetAtt ["securityGroup", "Outputs.rdsSecurityGroupId"]
+        rdsSecret: !GetAtt ["kms", "Outputs.rdsSecret"]
+        rdsMonitoringRoleArn: !GetAtt ["role", "Outputs.rdsMonitoringRoleArn"]
+
+
+  redis:
+    Type: "AWS::Serverless::Application"
+    Properties:
+      Location: "./resources/stage2/redis.yaml"
+      TimeoutInMinutes: 60
+      Parameters:
+        privateSubnetId1: !GetAtt ["network", "Outputs.privateSubnetId1"]
+        privateSubnetId2: !GetAtt ["network", "Outputs.privateSubnetId2"]
+        privateSubnetId3: !GetAtt ["network", "Outputs.privateSubnetId3"]
+        rdsSecurityGroupId: !GetAtt ["securityGroup", "Outputs.rdsSecurityGroupId"]
+
+
+Outputs:
+  amplifystack:
+    Description: ""
+    Value: !Ref "amplify"
+
+  amplifyAppId:
+    Description: ""
+    Value: !GetAtt "amplify.Outputs.amplifyAppId"
+
+  amplifyUrl:
+    Description: ""
+    Value: !GetAtt "amplify.Outputs.amplifyUrl"

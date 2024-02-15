@@ -1,0 +1,1410 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  lambdaFunction9:
+    Type: "String"
+    Description: "Logical ID"
+    Default: "news_recommendation_go_apis"
+
+
+Resources:
+  apiGatewayRestApi:
+    Type: "AWS::ApiGateway::RestApi"
+    Properties:
+      Name: "NewsRecommendationAPIs"
+      ApiKeySourceType: "HEADER"
+      EndpointConfiguration: 
+        Types: 
+          - "REGIONAL"
+
+
+  apiGatewayResource1:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      PathPart: "login"
+      ParentId: !GetAtt "apiGatewayRestApi.RootResourceId"
+
+
+  apiGatewayResource2:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      PathPart: "reset-password"
+      ParentId: !GetAtt "apiGatewayRestApi.RootResourceId"
+
+
+  apiGatewayResource3:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      PathPart: "genres"
+      ParentId: !GetAtt "apiGatewayRestApi.RootResourceId"
+
+
+  apiGatewayResource4:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      PathPart: "user-interactions"
+      ParentId: !GetAtt "apiGatewayRestApi.RootResourceId"
+
+
+  apiGatewayResource5:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      PathPart: "new-article"
+      ParentId: !GetAtt "apiGatewayRestApi.RootResourceId"
+
+
+  apiGatewayResource6:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      PathPart: "verify-user"
+      ParentId: !GetAtt "apiGatewayRestApi.RootResourceId"
+
+
+  apiGatewayResource7:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      PathPart: "last-articles-by-user"
+      ParentId: !GetAtt "apiGatewayRestApi.RootResourceId"
+
+
+  apiGatewayResource8:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      PathPart: "newsletter"
+      ParentId: !GetAtt "apiGatewayRestApi.RootResourceId"
+
+
+  apiGatewayResource9:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      PathPart: "create-user"
+      ParentId: !GetAtt "apiGatewayRestApi.RootResourceId"
+
+
+  apiGatewayResource10:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      PathPart: "forgot-password"
+      ParentId: !GetAtt "apiGatewayRestApi.RootResourceId"
+
+
+  apiGatewayResource11:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      PathPart: "news-for-you"
+      ParentId: !GetAtt "apiGatewayRestApi.RootResourceId"
+
+
+  apiGatewayResource12:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      PathPart: "breaking-news"
+      ParentId: !GetAtt "apiGatewayRestApi.RootResourceId"
+
+    
+  apiGatewayResource13:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      PathPart: "article-details"
+      ParentId: !GetAtt "apiGatewayRestApi.RootResourceId"
+
+
+  apiGatewayResource14:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      PathPart: "{article_id}"
+      ParentId: !Ref "apiGatewayResource13"
+  
+
+  apiGatewayResource15:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      PathPart: "{article_cluster_id}"
+      ParentId: !Ref "apiGatewayResource14"
+  
+
+  apiGatewayResource16:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      PathPart: "is-reset-password"
+      ParentId: !GetAtt "apiGatewayRestApi.RootResourceId"
+
+
+  apiGatewayResource17:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      PathPart: "resend-verification-mail"
+      ParentId: !GetAtt "apiGatewayRestApi.RootResourceId"
+
+
+  apiGatewayResource18:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      PathPart: "verify-reset-password-count"
+      ParentId: !GetAtt "apiGatewayRestApi.RootResourceId"
+
+
+
+
+  apiGatewayMethod1:  ## apiGatewayResource1 & login
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource1"
+      HttpMethod: "POST"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource1"
+        ContentHandling: "CONVERT_TO_TEXT"
+        IntegrationHttpMethod: "POST"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          ResponseTemplates: {}
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        TimeoutInMillis: 29000
+        Type: "AWS_PROXY"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${lambdaFunction9}/invocations"
+
+
+  apiGatewayMethod2:  ## apiGatewayResource1 & login options
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource1"
+      HttpMethod: "OPTIONS"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Headers": false
+          "method.response.header.Access-Control-Allow-Methods": false
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource1"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+            "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'"
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        RequestTemplates: 
+          "application/json": "{\"statusCode\": 200}"
+        TimeoutInMillis: 29000
+        Type: "MOCK"
+
+
+  apiGatewayMethod3: ## apiGatewayResource2 & reset-password
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource2"
+      HttpMethod: "POST"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource2"
+        ContentHandling: "CONVERT_TO_TEXT"
+        IntegrationHttpMethod: "POST"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          ResponseTemplates: {}
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        TimeoutInMillis: 29000
+        Type: "AWS_PROXY"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${lambdaFunction9}/invocations"
+
+
+  apiGatewayMethod4:  ## apiGatewayResource2 & reset-password option
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource2"
+      HttpMethod: "OPTIONS"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Headers": false
+          "method.response.header.Access-Control-Allow-Methods": false
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource2"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+            "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'"
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        RequestTemplates: 
+          "application/json": "{\"statusCode\": 200}"
+        TimeoutInMillis: 29000
+        Type: "MOCK"
+
+
+  apiGatewayMethod5:  ## apiGatewayResource3 & genres
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource3"
+      HttpMethod: "GET"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource3"
+        ContentHandling: "CONVERT_TO_TEXT"
+        IntegrationHttpMethod: "POST"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        TimeoutInMillis: 29000
+        Type: "AWS_PROXY"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${lambdaFunction9}/invocations"
+
+
+  apiGatewayMethod6:  ## apiGatewayResource3 & genres option
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource3"
+      HttpMethod: "OPTIONS"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Headers": false
+          "method.response.header.Access-Control-Allow-Methods": false
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource3"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+            "method.response.header.Access-Control-Allow-Methods": "'GET,OPTIONS'"
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        RequestTemplates: 
+          "application/json": "{\"statusCode\": 200}"
+        TimeoutInMillis: 29000
+        Type: "MOCK"
+
+
+  apiGatewayMethod7:  ## apiGatewayResource4 & user-interactions
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource4"
+      HttpMethod: "POST"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource4"
+        ContentHandling: "CONVERT_TO_TEXT"
+        IntegrationHttpMethod: "POST"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        TimeoutInMillis: 29000
+        Type: "AWS_PROXY"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${lambdaFunction9}/invocations"
+
+
+  apiGatewayMethod8:  ## apiGatewayResource4 & user-interactions option
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource4"
+      HttpMethod: "OPTIONS"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Headers": false
+          "method.response.header.Access-Control-Allow-Methods": false
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource4"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+            "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'"
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        RequestTemplates: 
+          "application/json": "{\"statusCode\": 200}"
+        TimeoutInMillis: 29000
+        Type: "MOCK"
+
+
+  apiGatewayMethod9:  ## apiGatewayResource5 & new-article
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource5"
+      HttpMethod: "POST"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource5"
+        ContentHandling: "CONVERT_TO_TEXT"
+        IntegrationHttpMethod: "POST"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        TimeoutInMillis: 29000
+        Type: "AWS_PROXY"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${lambdaFunction9}/invocations"
+
+
+  apiGatewayMethod10:  ## apiGatewayResource5 & new-article option
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource5"
+      HttpMethod: "OPTIONS"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Headers": false
+          "method.response.header.Access-Control-Allow-Methods": false
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource5"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+            "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'"
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        RequestTemplates: 
+          "application/json": "{\"statusCode\": 200}"
+        TimeoutInMillis: 29000
+        Type: "MOCK"
+
+
+  apiGatewayMethod11:  ## apiGatewayResource6 & verify-user
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource6"
+      HttpMethod: "POST"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource6"
+        ContentHandling: "CONVERT_TO_TEXT"
+        IntegrationHttpMethod: "POST"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          ResponseTemplates: {}
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        TimeoutInMillis: 29000
+        Type: "AWS_PROXY"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${lambdaFunction9}/invocations"
+
+
+  apiGatewayMethod12:  ## apiGatewayResource6 & verify-user option
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource6"
+      HttpMethod: "OPTIONS"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Headers": false
+          "method.response.header.Access-Control-Allow-Methods": false
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource6"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+            "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'"
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        RequestTemplates: 
+          "application/json": "{\"statusCode\": 200}"
+        TimeoutInMillis: 29000
+        Type: "MOCK"
+
+
+  apiGatewayMethod13:  ## apiGatewayResource7 & last-articles-by-user
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource7"
+      HttpMethod: "GET"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource7"
+        ContentHandling: "CONVERT_TO_TEXT"
+        IntegrationHttpMethod: "POST"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        TimeoutInMillis: 29000
+        Type: "AWS_PROXY"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${lambdaFunction9}/invocations"
+
+
+  apiGatewayMethod14:  ## apiGatewayResource7 & last-articles-by-user option
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource7"
+      HttpMethod: "OPTIONS"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Headers": false
+          "method.response.header.Access-Control-Allow-Methods": false
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource7"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+            "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET'"
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        RequestTemplates: 
+          "application/json": "{\"statusCode\": 200}"
+        TimeoutInMillis: 29000
+        Type: "MOCK"
+
+
+  apiGatewayMethod15:  ## apiGatewayResource8 & newsletter
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource8"
+      HttpMethod: "POST"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource7"
+        ContentHandling: "CONVERT_TO_TEXT"
+        IntegrationHttpMethod: "POST"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        TimeoutInMillis: 29000
+        Type: "AWS_PROXY"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${lambdaFunction9}/invocations"
+
+
+  apiGatewayMethod16:  ## apiGatewayResource8 & newsletter option
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource8"
+      HttpMethod: "OPTIONS"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Headers": false
+          "method.response.header.Access-Control-Allow-Methods": false
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource8"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+            "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'"
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        RequestTemplates: 
+          "application/json": "{\"statusCode\": 200}"
+        TimeoutInMillis: 29000
+        Type: "MOCK"
+
+
+  apiGatewayMethod17: ## apiGatewayResource9 & create-user
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource9"
+      HttpMethod: "POST"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource9"
+        ContentHandling: "CONVERT_TO_TEXT"
+        IntegrationHttpMethod: "POST"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          ResponseTemplates: {}
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        TimeoutInMillis: 29000
+        Type: "AWS_PROXY"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${lambdaFunction9}/invocations"
+
+
+  apiGatewayMethod18:  ## apiGatewayResource9 & create-user option
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource9"
+      HttpMethod: "OPTIONS"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Headers": false
+          "method.response.header.Access-Control-Allow-Methods": false
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource9"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+            "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'"
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        RequestTemplates: 
+          "application/json": "{\"statusCode\": 200}"
+        TimeoutInMillis: 29000
+        Type: "MOCK"
+
+
+  apiGatewayMethod19: ## apiGatewayResource10 & forgot-password
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource10"
+      HttpMethod: "POST"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource10"
+        ContentHandling: "CONVERT_TO_TEXT"
+        IntegrationHttpMethod: "POST"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          ResponseTemplates: {}
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        TimeoutInMillis: 29000
+        Type: "AWS_PROXY"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${lambdaFunction9}/invocations"
+
+
+  apiGatewayMethod20:  ## apiGatewayResource10 & forgot-password option
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource10"
+      HttpMethod: "OPTIONS"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Headers": false
+          "method.response.header.Access-Control-Allow-Methods": false
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource10"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+            "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'"
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        RequestTemplates: 
+          "application/json": "{\"statusCode\": 200}"
+        TimeoutInMillis: 29000
+        Type: "MOCK"
+
+
+  apiGatewayMethod21: ## apiGatewayResource11 & news-for-you
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource11"
+      HttpMethod: "POST"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource11"
+        ContentHandling: "CONVERT_TO_TEXT"
+        IntegrationHttpMethod: "POST"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        TimeoutInMillis: 29000
+        Type: "AWS_PROXY"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${lambdaFunction9}/invocations"
+
+
+  apiGatewayMethod22: ## apiGatewayResource11 & news-for-you
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource11"
+      HttpMethod: "GET"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource11"
+        ContentHandling: "CONVERT_TO_TEXT"
+        IntegrationHttpMethod: "POST"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        TimeoutInMillis: 29000
+        Type: "AWS_PROXY"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${lambdaFunction9}/invocations"
+
+
+  apiGatewayMethod23:  ## apiGatewayResource11 & news-for-you option
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource11"
+      HttpMethod: "OPTIONS"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Headers": false
+          "method.response.header.Access-Control-Allow-Methods": false
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource11"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+            "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST,GET'"
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        RequestTemplates: 
+          "application/json": "{\"statusCode\": 200}"
+        TimeoutInMillis: 29000
+        Type: "MOCK"
+
+
+  apiGatewayMethod24: ## apiGatewayResource12 & breaking-news
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource12"
+      HttpMethod: "POST"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource12"
+        ContentHandling: "CONVERT_TO_TEXT"
+        IntegrationHttpMethod: "POST"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        TimeoutInMillis: 29000
+        Type: "AWS_PROXY"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${lambdaFunction9}/invocations"
+
+
+  apiGatewayMethod25: ## apiGatewayResource12 & breaking-news
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource12"
+      HttpMethod: "GET"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource12"
+        ContentHandling: "CONVERT_TO_TEXT"
+        IntegrationHttpMethod: "POST"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        TimeoutInMillis: 29000
+        Type: "AWS_PROXY"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${lambdaFunction9}/invocations"
+
+
+  apiGatewayMethod26:  ## apiGatewayResource12 & breaking-news option
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource12"
+      HttpMethod: "OPTIONS"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Headers": false
+          "method.response.header.Access-Control-Allow-Methods": false
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource12"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+            "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST,GET'"
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        RequestTemplates: 
+          "application/json": "{\"statusCode\": 200}"
+        TimeoutInMillis: 29000
+        Type: "MOCK"
+
+
+  apiGatewayMethod27: ## apiGatewayResource13 & article-details
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource13"
+      HttpMethod: "GET"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource13"
+        ContentHandling: "CONVERT_TO_TEXT"
+        IntegrationHttpMethod: "POST"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          ResponseTemplates: {}
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        TimeoutInMillis: 29000
+        Type: "AWS_PROXY"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${lambdaFunction9}/invocations"
+
+
+  apiGatewayMethod28:  ## apiGatewayResource13 & article-details option
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource13"
+      HttpMethod: "OPTIONS"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Headers": false
+          "method.response.header.Access-Control-Allow-Methods": false
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource13"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+            "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET'"
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        RequestTemplates: 
+          "application/json": "{\"statusCode\": 200}"
+        TimeoutInMillis: 29000
+        Type: "MOCK"
+
+
+  apiGatewayMethod29: ## apiGatewayResource14 & {article_id}
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource14"
+      HttpMethod: "GET"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: 
+        "method.request.path.article_id": true
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource14"
+        ContentHandling: "CONVERT_TO_TEXT"
+        IntegrationHttpMethod: "POST"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          ResponseTemplates: {}
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        TimeoutInMillis: 29000
+        Type: "AWS_PROXY"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${lambdaFunction9}/invocations"
+
+
+  apiGatewayMethod30:  ## apiGatewayResource14 & {article_id} option
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource14"
+      HttpMethod: "OPTIONS"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Headers": false
+          "method.response.header.Access-Control-Allow-Methods": false
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource14"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+            "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET'"
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        RequestTemplates: 
+          "application/json": "{\"statusCode\": 200}"
+        TimeoutInMillis: 29000
+        Type: "MOCK"
+
+
+  apiGatewayMethod31: ## apiGatewayResource15 & {article_cluster_id}
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource15"
+      HttpMethod: "GET"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: 
+        "method.request.path.article_cluster_id": true
+        "method.request.path.article_id": true
+      MethodResponses: 
+        - 
+          ResponseModels: 
+            "application/json": "Empty"
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Origin": false
+          StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource15"
+        ContentHandling: "CONVERT_TO_TEXT"
+        IntegrationHttpMethod: "POST"
+        IntegrationResponses: 
+          - 
+            ResponseParameters: 
+              "method.response.header.Access-Control-Allow-Origin": "'*'"
+            ResponseTemplates: {}
+            StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        TimeoutInMillis: 29000
+        Type: "AWS_PROXY"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${lambdaFunction9}/invocations"
+
+
+  apiGatewayMethod32:  ## apiGatewayResource15 & {article_cluster_id} option
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource15"
+      HttpMethod: "OPTIONS"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Headers": false
+          "method.response.header.Access-Control-Allow-Methods": false
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource15"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+            "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET'"
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        RequestTemplates: 
+          "application/json": "{\"statusCode\": 200}"
+        TimeoutInMillis: 29000
+        Type: "MOCK"
+
+  
+  apiGatewayMethod33: ## apiGatewayResource16 & is-reset-password Post
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource16"
+      HttpMethod: "POST"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource16"
+        ContentHandling: "CONVERT_TO_TEXT"
+        IntegrationHttpMethod: "POST"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          ResponseTemplates: {}
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        TimeoutInMillis: 29000
+        Type: "AWS_PROXY"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${lambdaFunction9}/invocations"
+
+
+  apiGatewayMethod34: ## apiGatewayResource16 & is-reset-password option
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource16"
+      HttpMethod: "OPTIONS"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Headers": false
+          "method.response.header.Access-Control-Allow-Methods": false
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource16"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+            "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'"
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        RequestTemplates: 
+          "application/json": "{\"statusCode\": 200}"
+        TimeoutInMillis: 29000
+        Type: "MOCK"
+
+
+  apiGatewayMethod35: ## apiGatewayResource17 & resend-verification-mail Post
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource17"
+      HttpMethod: "POST"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource17"
+        ContentHandling: "CONVERT_TO_TEXT"
+        IntegrationHttpMethod: "POST"
+        IntegrationResponses: 
+        - 
+          ResponseTemplates: {}
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        TimeoutInMillis: 29000
+        Type: "AWS_PROXY"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${lambdaFunction9}/invocations"
+
+
+  apiGatewayMethod36: ## apiGatewayResource17 & resend-verification-mail Option
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource17"
+      HttpMethod: "OPTIONS"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Headers": false
+          "method.response.header.Access-Control-Allow-Methods": false
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource17"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+            "method.response.header.Access-Control-Allow-Methods": "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        RequestTemplates: 
+          "application/json": "{\"statusCode\": 200}"
+        TimeoutInMillis: 29000
+        Type: "MOCK"
+
+
+  apiGatewayMethod37: ## apiGatewayResource18 & verify-reset-password-count Post
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource18"
+      HttpMethod: "POST"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource18"
+        ContentHandling: "CONVERT_TO_TEXT"
+        IntegrationHttpMethod: "POST"
+        IntegrationResponses: 
+        - 
+          ResponseTemplates: {}
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        TimeoutInMillis: 29000
+        Type: "AWS_PROXY"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${lambdaFunction9}/invocations"
+
+
+  apiGatewayMethod38: ## apiGatewayResource18 & verify-reset-password-count Option
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+      ResourceId: !Ref "apiGatewayResource18"
+      HttpMethod: "OPTIONS"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      RequestParameters: {}
+      MethodResponses: 
+      - 
+        ResponseModels: 
+          "application/json": "Empty"
+        ResponseParameters: 
+          "method.response.header.Access-Control-Allow-Headers": false
+          "method.response.header.Access-Control-Allow-Methods": false
+          "method.response.header.Access-Control-Allow-Origin": false
+        StatusCode: "200"
+      Integration: 
+        CacheNamespace: !Ref "apiGatewayResource18"
+        IntegrationResponses: 
+        - 
+          ResponseParameters: 
+            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+            "method.response.header.Access-Control-Allow-Methods": "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          StatusCode: "200"
+        PassthroughBehavior: "WHEN_NO_MATCH"
+        RequestTemplates: 
+          "application/json": "{\"statusCode\": 200}"
+        TimeoutInMillis: 29000
+        Type: "MOCK"
+
+
+
+
+Outputs:
+  apiGatewayRestApi:
+    Description: "NewsRecommendationAPIs"
+    Value: !Ref "apiGatewayRestApi"
+

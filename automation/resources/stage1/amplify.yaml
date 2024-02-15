@@ -1,0 +1,97 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  repoName:
+    Type: "String"
+    Description: "Codecommit Repo Name"
+
+  cloneUrl:
+    Type: "String"
+    Description: "clone url for codecommit"
+
+  amplifyRoleArn:
+    Type: "String"
+    Description: "Codecommit Repo ARN"
+
+  apiGatewayRestApi:
+    Type: "String"
+    Description: "Codecommit Repo ARN"
+
+  apiGatewayV2Api:
+    Type: "String"
+    Description: "Codecommit Repo ARN"
+
+  apiGatewayStage:
+    Type: "String"
+    Description: "Codecommit Repo ARN"
+  
+  apiGatewayV2Stage:
+    Type: "String"
+    Description: "Codecommit Repo ARN"
+
+
+
+
+Resources:
+  amplifyApp:
+    Type: AWS::Amplify::App
+    Properties:
+      Name: !Ref "repoName"
+      Repository: !Ref "cloneUrl"
+      IAMServiceRole: !Ref "amplifyRoleArn"
+      CustomRules: 
+        - 
+          Source: "/<*>"
+          Target: "/index.html"
+          Status: "404-200"
+        - 
+          Source: "</^[^.]+$|\\.(?!(css|gif|ico|jpg|js|png|txt|svg|woff|ttf|map|json)$)([^.]+$)/>"
+          Target: "/index.html"
+          Status: "200"
+      BuildSpec: |
+        version: 1
+        frontend:
+          phases:
+            preBuild:
+              commands:
+                - nvm use $VERSION_NODE_12
+                - npm i
+            build:
+              commands:
+                - nvm use $VERSION_NODE_12
+                - npm run build
+                - echo "REACT_APP_BASE_URL = $REACT_APP_BASE_URL" >> .env
+                - echo "REACT_APP_WSS_URL = $REACT_APP_WSS_URL" >> .env
+          artifacts:
+            baseDirectory: build
+            files:
+              - '**/*'
+          cache:
+            paths:
+              - node_modules/**/*
+          
+      EnableBranchAutoDeletion: false
+      EnvironmentVariables:
+        - Name: "REACT_APP_BASE_URL"
+          Value: !Sub "https://${apiGatewayRestApi}.execute-api.${AWS::Region}.amazonaws.com/${apiGatewayStage}"
+        - Name: "REACT_APP_WSS_URL"
+          Value: !Sub "wss://${apiGatewayV2Api}.execute-api.${AWS::Region}.amazonaws.com/${apiGatewayV2Stage}"
+      CustomHeaders: ""
+
+
+  amplifyBranch:
+    Type: AWS::Amplify::Branch
+    Properties:
+      AppId: !GetAtt amplifyApp.AppId
+      BranchName: master
+      EnableAutoBuild: true
+      Stage: DEVELOPMENT
+    
+
+Outputs:  
+  amplifyAppId:
+    Description: ""
+    Value: !GetAtt "amplifyApp.AppId"
+
+  amplifyUrl:
+    Description: ""
+    Value: !GetAtt "amplifyApp.DefaultDomain"

@@ -1,0 +1,171 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  kinesisStreamArn:
+    Type: "String"
+    Description: "Kinesis Stream Arn"
+
+  apiGatewayRestApi:
+    Type: "String"
+    Description: "Logical ID"
+
+  lambdaFunction1:
+    Type: "String"
+    Description: "Logical ID"
+
+  lambdaFunction2:
+    Type: "String"
+    Description: "Logical ID"
+
+  lambdaFunction3:
+    Type: "String"
+    Description: "Logical ID"
+
+  lambdaFunction4:
+    Type: "String"
+    Description: "Logical ID"
+
+  lambdaFunction5:
+    Type: "String"
+    Description: "Logical ID"
+
+  lambdaFunction6:
+    Type: "String"
+    Description: "Logical ID"
+
+  lambdaFunction7:
+    Type: "String"
+    Description: "Logical ID"
+
+  lambdaFunction8:
+    Type: "String"
+    Description: "Logical ID"
+
+  lambdaFunctionArn1:
+    Type: "String"
+    Description: "Lamnda Function Arn"
+
+  lambdaFunctionArn2:
+    Type: "String"
+    Description: "Lamnda Function Arn"
+
+  lambdaFunctionArn3:
+    Type: "String"
+    Description: "Lamnda Function Arn"
+
+  lambdaFunctionArn4:
+    Type: "String"
+    Description: "Lamnda Function Arn"
+
+  lambdaFunctionArn5:
+    Type: "String"
+    Description: "Lamnda Function Arn"
+
+  lambdaFunctionArn6:
+    Type: "String"
+    Description: "Lamnda Function Arn"
+
+  lambdaFunctionArn7:
+    Type: "String"
+    Description: "Lamnda Function Arn"
+
+  lambdaFunctionArn8:
+    Type: "String"
+    Description: "Lamnda Function Arn"
+
+  webSocketLambdaArn:
+    Type: "String"
+    Description: "Lamnda Function Arn"
+
+
+Resources:
+  lambdaPermission1:  #lambdaFunction1 & lambdaFunctionArn1
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: "lambda:InvokeFunction"
+      FunctionName: !Ref "lambdaFunctionArn1"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${apiGatewayRestApi}/*/POST/${lambdaFunction1}"
+
+  
+  lambdaPermission2:  #lambdaFunction2 & lambdaFunctionArn2
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: "lambda:InvokeFunction"
+      FunctionName: !Ref "lambdaFunctionArn2"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${apiGatewayRestApi}/*/POST/${lambdaFunction2}"
+
+
+  lambdaPermission3:  #lambdaFunction3 & lambdaFunctionArn3
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: "lambda:InvokeFunction"
+      FunctionName: !Ref "lambdaFunctionArn3"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${apiGatewayRestApi}/*/POST/${lambdaFunction3}"
+
+    
+  lambdaPermission4:  #lambdaFunction4 & lambdaFunctionArn4
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: "lambda:InvokeFunction"
+      FunctionName: !Ref "lambdaFunctionArn4"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${apiGatewayRestApi}/*/GET/${lambdaFunction4}"
+
+
+  lambdaPermission5:  #lambdaFunction4 & lambdaFunctionArn4
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: "lambda:InvokeFunction"
+      FunctionName: !Ref "lambdaFunctionArn4"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${apiGatewayRestApi}/*/POST/${lambdaFunction4}"
+
+  
+  lambdaPermission6:  #lambdaFunction5 & lambdaFunctionArn5
+    Type: "AWS::Lambda::Permission"
+    Properties:
+        Action: "lambda:InvokeFunction"
+        FunctionName: !Ref "lambdaFunctionArn5"
+        Principal: "apigateway.amazonaws.com"
+        SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${apiGatewayRestApi}/*/POST/${lambdaFunction5}"
+
+
+  lambdaPermission7:  #lambdaFunction6 & lambdaFunctionArn6
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: "lambda:InvokeFunction"
+      FunctionName: !Ref "lambdaFunctionArn6"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${apiGatewayRestApi}/*/POST/${lambdaFunction6}"
+
+
+  lambdaPermission8:  #lambdaFunction6 & lambdaFunctionArn6
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: "lambda:InvokeFunction"
+      FunctionName: !Ref "lambdaFunctionArn6"
+      Principal: "lambda.amazonaws.com"
+      SourceArn: !Ref "webSocketLambdaArn"
+
+  
+  lambdaPermission9:  #lambdaFunction7 & lambdaFunctionArn7
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: "lambda:InvokeFunction"
+      FunctionName: !Ref "lambdaFunctionArn7"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${apiGatewayRestApi}/*/POST/${lambdaFunction7}"
+
+
+  lambdaEventSourceMapping: #lambdaFunction8 & lambdaFunctionArn8
+    Type: "AWS::Lambda::EventSourceMapping"
+    Properties:
+      BatchSize: 1
+      Enabled: true
+      EventSourceArn: !Ref "kinesisStreamArn"
+      FunctionName: !Ref "lambdaFunctionArn8"
+      MaximumBatchingWindowInSeconds: 0
+      StartingPosition: "LATEST"
+  

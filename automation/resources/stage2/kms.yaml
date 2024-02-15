@@ -1,0 +1,64 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  dbUserName:
+    Description: ""
+    Type: "String"
+    Default: "postgres"
+
+  cognitoUserPoolId:
+    Description: ""
+    Type: "String"
+
+  userPoolClientId:
+    Description: ""
+    Type: "String"
+
+  userPoolClientSecret:
+    Description: ""
+    Type: "String"
+
+
+Resources:
+  kmsKey:
+    Type: "AWS::KMS::Key"
+    Properties:
+      KeyPolicy:
+        Statement:
+          - Sid: "Enable IAM User Permissions"
+            Effect: "Allow"
+            Principal:
+              AWS: !Sub "arn:aws:iam::${AWS::AccountId}:root"
+            Action: "kms:*"
+            Resource: "*"
+
+
+  rdsSecret:
+    Type: "AWS::SecretsManager::Secret"
+    Properties:
+      Name: "dev/rds"
+      KmsKeyId: !Ref "kmsKey"
+      GenerateSecretString:
+        SecretStringTemplate: !Join [ '', [ '{"username": "', !Ref "dbUserName", '"}' ] ]
+        GenerateStringKey: "password"
+        PasswordLength: 16
+        ExcludeCharacters: '"@/\'
+
+
+  cognitoSecret:
+    Type: "AWS::SecretsManager::Secret"
+    Properties:
+      Name: "dev/cognito"
+      KmsKeyId: !Ref "kmsKey"
+      SecretString: !Sub "{\"cognito_client_id\":\"${userPoolClientId}\",\"cognito_secret_key\":\"${userPoolClientSecret}\",\"cognito_user_pool_id\":\"${cognitoUserPoolId}\"}"
+
+
+
+
+Outputs:
+  kmsKeyId:
+    Value: !Ref "kmsKey"
+    Description: "KMS Key Id"
+
+  rdsSecret:
+    Value: !Ref "rdsSecret"
+    Description: "RDS Secret Password"

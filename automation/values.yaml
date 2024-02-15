@@ -1,0 +1,34 @@
+# Cloud Formation Stack Variables
+bucket_name: unicorn-post-automation-bucket-staging-aws
+backend_bucket_name: unicorn-post-automation-backend-bucket-staging-aws
+stack_name: unicorn-post-automation-aws
+role_name: unicorn-post-sagemaker-role-staging-aws
+region: us-west-2
+cognito_domain_name: unicorn-post-domain10
+ 
+ 
+# Sagemaker Varibales
+model_name: kmeans-clustering-model
+kmeans_endpoint_name: article-clusterer-endpoint
+user_interactions_dynamo_table: ArticleUserInteractionsTable
+
+
+# Personalize one to one model Variaables
+dataset_group_1: breaking-news-one-to-one-aws
+interactions_schema_name: breakingnews-bedrock-demo-schema-aws
+dataset_1: breakingnews-one-to-one-interactions-aws
+items_schema_name: breakingnews-one-to-one-items-schema-aws
+dataset_2: breakingnews-one-to-one-items-aws
+solution_1: breakingnews-userpersonalization-one-to-one-aws
+campaign_name_1: breakingnews-userpersonalization-one-to-one-aws
+event_tracker_name_1: BreakingNews-one-to-one-event-tracker-aws
+filter_name: breakingnews-genre-filter-aws
+ 
+# Personalize clustered model and user affinity model params
+dataset_group_2: breaking-news-cluster-aws
+dataset_3: breakingnews-cluster-interactions-aws
+solution_2: breakingnews-userpersonalization-cluster-aws
+solution_3: breakingnews-usersegmentation-cluster-aws
+campaign_name_2: breakingnews-userpersonalization-cluster-aws
+event_tracker_name_2: breakingnews-clustered-event-tracker-aws
+segmentation_job_name: breakingnews-clustered-segmentation-job

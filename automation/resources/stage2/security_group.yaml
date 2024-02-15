@@ -1,0 +1,53 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Security group for rds"
+Parameters:
+  vpcId:
+    Description: ""
+    Type: "String"
+
+
+Resources:
+  securityGroup1:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "Allows lambdas to use rds"
+      GroupName: "rds-security-group"
+      VpcId: !Ref "vpcId"
+      SecurityGroupIngress:
+        - 
+          CidrIp: "0.0.0.0/0"
+          IpProtocol: "-1"
+        -
+          SourceSecurityGroupId: !Ref "securityGroup2"
+          IpProtocol: "-1"
+        
+      SecurityGroupEgress: 
+        - 
+          CidrIp: "0.0.0.0/0"
+          IpProtocol: "-1"
+
+  
+  securityGroup2:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "Allows lambdas Access"
+      GroupName: "lambda-security-group"
+      VpcId: !Ref "vpcId"
+      SecurityGroupIngress:
+        - 
+          CidrIp: "0.0.0.0/0"
+          IpProtocol: "-1"
+      SecurityGroupEgress: 
+        - 
+          CidrIp: "0.0.0.0/0"
+          IpProtocol: "-1"
+
+
+Outputs:
+  rdsSecurityGroupId:
+    Value: !Ref "securityGroup1"
+    Description: "Security Group ID"
+  
+  lambdaSecurityGroupId:
+    Value: !Ref "securityGroup2"
+    Description: "Security Group ID"

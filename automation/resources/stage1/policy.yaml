@@ -1,0 +1,154 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  repoArn:
+    Type: "String"
+    Description: "Repo Arn for created codecommit"
+
+Resources:
+  amplifyPolicy:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      ManagedPolicyName: !Sub "unicorn-amplify-codecommit-execution-policy-${AWS::Region}"
+      Path: "/service-role/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "PushLogs"
+            Effect: "Allow"
+            Action:
+              - "logs:CreateLogStream"
+              - "logs:PutLogEvents"
+            Resource: !Sub "arn:aws:logs:${AWS::Region}:128683131855:log-group:/aws/amplify/*:log-stream:*"
+
+          - Sid: "CreateLogGroup"
+            Effect: "Allow"
+            Action: "logs:CreateLogGroup"
+            Resource: !Sub "arn:aws:logs:${AWS::Region}:128683131855:log-group:/aws/amplify/*"
+
+          - Sid: "DescribeLogGroups"
+            Effect: "Allow"
+            Action: "logs:DescribeLogGroups"
+            Resource: !Sub "arn:aws:logs:${AWS::Region}:128683131855:log-group:*"
+
+          - Effect: "Allow"
+            Resource:
+              - !Ref "repoArn"
+            Action:
+              - "codecommit:GitPull"
+
+
+  lambdaPolicy:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      ManagedPolicyName: !Sub "unicorn-ml-lambda-policy-${AWS::Region}"
+      Path: "/service-role/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Effect: "Allow"
+          Action:
+            - "kinesis:SubscribeToShard"
+            - "dynamodb:PutItem"
+            - "personalize:PutEvents"
+            - "lambda:InvokeFunction"
+            - "kinesis:ListShards"
+            - "bedrock:InvokeModel"
+            - "kinesis:GetShardIterator"
+            - "kinesis:DescribeStream"
+            - "dynamodb:Query"
+            - "dynamodb:UpdateItem"
+            - "comprehend:DetectDominantLanguage"
+            - "logs:CreateLogGroup"
+            - "logs:PutLogEvents"
+            - "kinesis:ListStreams"
+            - "kinesis:PutRecord"
+            - "s3:PutObject"
+            - "s3:GetObject"
+            - "logs:CreateLogStream"
+            - "kinesis:DescribeStreamSummary"
+            - "personalize:GetRecommendations"
+            - "kinesis:GetRecords"
+            - "translate:TranslateText"
+            - "sagemaker:InvokeEndpoint"
+          Resource: "*"
+
+      
+  tableCreationPolicy:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      ManagedPolicyName: !Sub "unicorn-table-creation-policy-${AWS::Region}"
+      Path: "/service-role/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Sid: "VolumeEncryption"
+          Effect: "Allow"
+          Action:
+            - "kms:Encrypt"
+            - "kms:Decrypt"
+            - "kms:DescribeKey"
+          Resource: "*"
+
+        - Effect: "Allow"
+          Action: "logs:CreateLogGroup"
+          Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+
+        - Effect: "Allow"
+          Action:
+            - "logs:CreateLogStream"
+            - "logs:PutLogEvents"
+          Resource: "*"
+
+
+  webSocketLambdaPolicy:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      ManagedPolicyName: !Sub "unicorn-websocket-lambda-policy-${AWS::Region}"
+      Path: "/service-role/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Effect: "Allow"
+          Action: "logs:CreateLogGroup"
+          Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+
+        - Effect: "Allow"
+          Action:
+            - "logs:CreateLogStream"
+            - "logs:PutLogEvents"
+          Resource: "*"
+
+
+  manageConnectionPolicy:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      ManagedPolicyName: !Sub "manageconnections-policy-${AWS::Region}"
+      Path: "/service-role/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Effect: "Allow"
+          Action: "execute-api:ManageConnections"
+          Resource: "*"
+
+
+Outputs:
+  amplifyPolicy:
+    Description: "Policy for Amplify Role"
+    Value: !Ref "amplifyPolicy"
+
+  lambdaPolicy:
+    Description: "Policy for ML Lambda Role"
+    Value: !Ref "lambdaPolicy"
+
+  tableCreationPolicy:
+    Description: "Policy for ML Lambda Role"
+    Value: !Ref "tableCreationPolicy"
+  
+  webSocketLambdaPolicy:
+    Description: "Policy for Websocket Lambda Role"
+    Value: !Ref "webSocketLambdaPolicy"
+
+  manageConnectionPolicy:
+    Description: "Policy for Websocket Lambda Role"
+    Value: !Ref "manageConnectionPolicy"

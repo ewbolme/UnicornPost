@@ -1,0 +1,22 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: ""
+Resources:
+  kinesisStream:
+    Type: "AWS::Kinesis::Stream"
+    Properties:
+      Name: "user-interaction"
+      RetentionPeriodHours: 24
+      # StreamEncryption: 
+      #   EncryptionType: "NONE"
+      ShardCount: 4
+
+
+
+Outputs:
+  kinesisStream:
+    Description: "Kinesis Stream Name"
+    Value: !Ref "kinesisStream"
+
+  kinesisStreamArn:
+    Description: "Kinesis Stream Arn"
+    Value: !GetAtt "kinesisStream.Arn"

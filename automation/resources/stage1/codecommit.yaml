@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  bucketName:
+    Description: "S3 Bucket Name"
+    Type: "String"
+
+
+Resources:
+  codeCommitRepository:
+    Type: "AWS::CodeCommit::Repository"
+    Properties:
+      RepositoryName: "frontend-breaking-news"
+      Code:
+        BranchName: "master"
+        S3:
+          Bucket: !Ref "bucketName"
+          Key: "react/react.zip"
+
+
+
+
+Outputs:
+  repoName:
+    Value: !GetAtt "codeCommitRepository.Name"
+    Description: ""
+  
+  repoArn:
+    Value: !GetAtt "codeCommitRepository.Arn"
+    Description: ""
+
+  cloneUrl:
+    Value: !GetAtt "codeCommitRepository.CloneUrlHttp"
+    Description: ""

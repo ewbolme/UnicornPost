@@ -1,0 +1,11 @@
+beautifulsoup4
+boto3
+numpy
+pandas
+sagemaker
+tqdm
+bs4
+fsspec
+s3fs
+yq
+jq

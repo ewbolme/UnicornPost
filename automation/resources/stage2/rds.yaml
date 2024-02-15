@@ -1,0 +1,91 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: ""
+Parameters:
+  vpcId:
+    Description: ""
+    Type: "String"
+
+  privateSubnetId1:
+    Description: ""
+    Type: "String"
+
+  privateSubnetId2:
+    Description: ""
+    Type: "String"
+
+  privateSubnetId3:
+    Description: ""
+    Type: "String"
+
+  rdsSecurityGroupId:
+    Description: ""
+    Type: "String"
+
+  dbUserName:
+    Type: "String"
+    Description: "The username for our database"
+    Default: "postgres"
+
+  rdsSecret:
+    Description: ""
+    Type: "String"
+
+  rdsMonitoringRoleArn:
+    Description: ""
+    Type: "String"
+
+  
+
+
+Resources:
+  dbSubnetGroup:
+    Type: "AWS::RDS::DBSubnetGroup"
+    Properties:
+      DBSubnetGroupDescription: "Subnet Group for postgres database"
+      DBSubnetGroupName: !Sub "${vpcId}-unicorn-db-subnet-group"
+      SubnetIds: 
+        - !Ref "privateSubnetId1"
+        - !Ref "privateSubnetId2"
+        - !Ref "privateSubnetId3"
+      # Tags: 
+      #   - Key: "createdBy"
+      #     Value: "CloudFormation Stack"
+
+
+  rdsInstance:
+    Type: "AWS::RDS::DBInstance"
+    Properties:
+      DBInstanceIdentifier: "unicorn-db"
+      AllocatedStorage: 400
+      DBInstanceClass: "db.m5.large"
+      Engine: !Ref "dbUserName"
+      MasterUsername: !Ref "dbUserName"
+      MasterUserPassword: !Join [ '', [ '{{resolve:secretsmanager:', !Ref "rdsSecret", ':SecretString:password}}' ] ]
+      BackupRetentionPeriod: 7
+      MultiAZ: false
+      EngineVersion: "15.4"
+      AutoMinorVersionUpgrade: true
+      PubliclyAccessible: false
+      StorageType: "gp3"
+      Port: 5432
+      StorageEncrypted: true
+      CopyTagsToSnapshot: true
+      MonitoringInterval: 60
+      EnableIAMDatabaseAuthentication: false
+      EnablePerformanceInsights: true
+      PerformanceInsightsRetentionPeriod: 7
+      DeletionProtection: false
+      DBSubnetGroupName: !Ref "dbSubnetGroup"
+      VPCSecurityGroups: 
+        - !Ref "rdsSecurityGroupId"
+      MaxAllocatedStorage: 1000
+      MonitoringRoleArn: !Ref "rdsMonitoringRoleArn"
+
+
+
+
+Outputs:
+  dbInstanceEndpoint:
+    Value: !GetAtt "rdsInstance.Endpoint.Address"
+    Description: "Endpoint of the RDS instance"
+

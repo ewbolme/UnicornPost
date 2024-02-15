@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+  lambdaLayer:
+    Type: "AWS::Lambda::LayerVersion"
+    Properties:
+      Description: ""
+      CompatibleRuntimes:
+        - "python3.11"
+      LayerName: "boto3-latest"
+      Content: "../../lambdas/layers/new-artical-lambda-layer.zip"
+
+  lambdaLayer2:
+    Type: "AWS::Lambda::LayerVersion"
+    Properties:
+      Description: ""
+      CompatibleRuntimes: 
+        - "python3.10"
+        - "python3.11"
+        - "python3.8"
+        - "python3.9"
+      LayerName: "jwt-layer"
+      Content: "../../lambdas/layers/jwt.zip"
+
+
+
+
+Outputs:
+  lambdaLayer:
+    Description: "Lambda Layer"
+    Value: !Ref "lambdaLayer"
+
+  lambdaLayer2:
+    Description: "Lambda Layer"
+    Value: !Ref "lambdaLayer2"

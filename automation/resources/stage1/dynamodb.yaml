@@ -1,0 +1,181 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  tableName1:
+    Description: "Table Name"
+    Type: "String"
+    Default: "ArticleUserInteractionsTable"
+
+  tableName2:
+    Description: "Table Name"
+    Type: "String"
+    Default: "BreakingNewsMainTable"
+
+  tableName3:
+    Description: "Table Name"
+    Type: "String"
+    Default: "ClusterLookupTable"
+
+  bucketName:
+    Description: "S3 Bucket Name"
+    Type: "String"
+
+
+Resources:
+  table1:
+    Type: "AWS::DynamoDB::Table"
+    Properties:
+      AttributeDefinitions: 
+      - 
+        AttributeName: "userId"
+        AttributeType: "S"
+      BillingMode: "PAY_PER_REQUEST"
+      TableName: !Ref "tableName1"
+      KeySchema: 
+      - 
+        AttributeName: "userId"
+        KeyType: "HASH"
+      GlobalSecondaryIndexes: 
+      - 
+        IndexName: "InteractionsLookupIndex"
+        KeySchema: 
+        - 
+          AttributeName: "userId"
+          KeyType: "HASH"
+        Projection: 
+          ProjectionType: "INCLUDE"
+          NonKeyAttributes: 
+            - "articleInteractions"
+        ProvisionedThroughput: 
+          ReadCapacityUnits: 0
+          WriteCapacityUnits: 0
+      # ImportSourceSpecification:
+      #   InputCompressionType: "NONE"
+      #   InputFormat: "CSV"
+      #   S3BucketSource:
+      #     S3Bucket: !Ref "bucketName"
+      #     S3KeyPrefix: "dynamodb/ArticleUserInteractionsTable.csv"
+
+
+  table2:
+    Type: "AWS::DynamoDB::Table"
+    Properties:
+      AttributeDefinitions: 
+      - 
+        AttributeName: "articleClusterId"
+        AttributeType: "S"
+      - 
+        AttributeName: "articleCreationTimestamp"
+        AttributeType: "N"
+      - 
+        AttributeName: "articleId"
+        AttributeType: "S"
+      BillingMode: "PAY_PER_REQUEST"
+      TableName: !Ref "tableName2"
+      KeySchema: 
+      - 
+        AttributeName: "articleClusterId"
+        KeyType: "HASH"
+      - 
+        AttributeName: "articleId"
+        KeyType: "RANGE"
+      GlobalSecondaryIndexes: 
+      - 
+        IndexName: "PersonalizedIndex"
+        KeySchema: 
+        - 
+          AttributeName: "articleClusterId"
+          KeyType: "HASH"
+        - 
+          AttributeName: "articleCreationTimestamp"
+          KeyType: "RANGE"
+        Projection: 
+          ProjectionType: "INCLUDE"
+          NonKeyAttributes: 
+            - "elligableUsers"
+            - "articleTrigger"
+            - "articleHook"
+            - "articleId"
+        ProvisionedThroughput: 
+          ReadCapacityUnits: 0
+          WriteCapacityUnits: 0
+      - 
+        IndexName: "BreakingNewsIndex"
+        KeySchema: 
+        - 
+          AttributeName: "articleClusterId"
+          KeyType: "HASH"
+        - 
+          AttributeName: "articleCreationTimestamp"
+          KeyType: "RANGE"
+        Projection: 
+          ProjectionType: "INCLUDE"
+          NonKeyAttributes: 
+            - "elligableUsers"
+            - "articleHook"
+            - "articleId"
+            - "articleSummary"
+            - "articleTitle"
+        ProvisionedThroughput: 
+          ReadCapacityUnits: 0
+          WriteCapacityUnits: 0
+      - 
+        IndexName: "PersonalizedGenAIIndex"
+        KeySchema: 
+        - 
+          AttributeName: "articleClusterId"
+          KeyType: "HASH"
+        - 
+          AttributeName: "articleCreationTimestamp"
+          KeyType: "RANGE"
+        Projection: 
+          ProjectionType: "INCLUDE"
+          NonKeyAttributes: 
+            - "elligableUsers"
+            - "articleTrigger"
+            - "articleHook"
+            - "articleId"
+            - "articleSummary"
+        ProvisionedThroughput: 
+          ReadCapacityUnits: 0
+          WriteCapacityUnits: 0
+      ImportSourceSpecification:
+        InputCompressionType: "NONE"
+        InputFormat: "CSV"
+        S3BucketSource:
+          S3Bucket: !Ref "bucketName"
+          S3KeyPrefix: "dynamodb/BreakingNewsMainTable.csv"
+
+
+  table3:
+    Type: "AWS::DynamoDB::Table"
+    Properties:
+      AttributeDefinitions: 
+      - 
+        AttributeName: "articleId"
+        AttributeType: "S"
+      BillingMode: "PAY_PER_REQUEST"
+      TableName: !Ref "tableName3"
+      KeySchema: 
+      - 
+        AttributeName: "articleId"
+        KeyType: "HASH"
+      GlobalSecondaryIndexes: 
+      - 
+        IndexName: "ClusterLookupIndex"
+        KeySchema: 
+        - 
+          AttributeName: "articleId"
+          KeyType: "HASH"
+        Projection: 
+          ProjectionType: "INCLUDE"
+          NonKeyAttributes: 
+            - "articleClusterId"
+        ProvisionedThroughput: 
+          ReadCapacityUnits: 0
+          WriteCapacityUnits: 0
+      ImportSourceSpecification:
+        InputCompressionType: "NONE"
+        InputFormat: "CSV"
+        S3BucketSource:
+          S3Bucket: !Ref "bucketName"
+          S3KeyPrefix: "dynamodb/ClusterLookupTable.csv"

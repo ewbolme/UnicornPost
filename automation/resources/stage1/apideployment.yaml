@@ -1,0 +1,35 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  apiGatewayRestApi:
+    Type: "String"
+    Description: "Logical ID"
+
+
+Resources:
+  apiGatewayStage:
+    Type: "AWS::ApiGateway::Stage"
+    Properties:
+      StageName: "dev"
+      RestApiId: !Ref "apiGatewayRestApi"
+      DeploymentId: !Ref "apiGatewayDeployment"
+      Description: "For ML lambdas"
+      CacheClusterEnabled: false
+      TracingEnabled: false
+
+
+  apiGatewayDeployment:
+    Type: "AWS::ApiGateway::Deployment"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+
+
+
+
+Outputs:
+  apiGatewayStage:
+    Description: ""
+    Value:  !Ref "apiGatewayStage"
+
+  apiGatewayDeployment:
+    Description: ""
+    Value:  !Ref "apiGatewayDeployment"

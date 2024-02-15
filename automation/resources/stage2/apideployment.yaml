@@ -1,0 +1,64 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  apiGatewayRestApi:
+    Type: "String"
+    Description: "Logical ID"
+
+  apiGatewayV2Api:
+    Type: "String"
+    Description: "Logical ID"
+
+
+Resources:
+  apiGatewayStage:
+    Type: "AWS::ApiGateway::Stage"
+    Properties:
+      StageName: "dev"
+      DeploymentId: !Ref "apiGatewayDeployment"
+      RestApiId: !Ref "apiGatewayRestApi"
+      CacheClusterEnabled: false
+      TracingEnabled: false
+
+
+  apiGatewayDeployment:
+    Type: "AWS::ApiGateway::Deployment"
+    Properties:
+      RestApiId: !Ref "apiGatewayRestApi"
+
+  
+  apiGatewayV2Stage:
+    Type: "AWS::ApiGatewayV2::Stage"
+    Properties:
+      StageName: "dev"
+      ApiId: !Ref "apiGatewayV2Api"
+      DeploymentId: !Ref "apiGatewayV2Deployment"
+      DefaultRouteSettings: 
+        DataTraceEnabled: false
+        DetailedMetricsEnabled: false
+        LoggingLevel: "OFF"
+
+
+  apiGatewayV2Deployment:
+    Type: "AWS::ApiGatewayV2::Deployment"
+    Properties:
+      ApiId: !Ref "apiGatewayV2Api"
+
+
+
+
+Outputs:
+  apiGatewayStage:
+    Description: ""
+    Value:  !Ref "apiGatewayStage"
+
+  apiGatewayDeployment:
+    Description: ""
+    Value:  !Ref "apiGatewayDeployment"
+
+  apiGatewayV2Stage:
+    Description: ""
+    Value:  !Ref "apiGatewayV2Stage"
+
+  apiGatewayV2Deployment:
+    Description: ""
+    Value:  !Ref "apiGatewayV2Deployment"

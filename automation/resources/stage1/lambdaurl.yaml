@@ -1,0 +1,30 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  lambdaFunctionArn6:
+    Type: "String"
+    Description: "Lamnda Function Arn"
+
+Resources:
+  personalizedURL:
+    Type: "AWS::Lambda::Url"
+    Properties:
+      AuthType: "NONE"
+      InvokeMode: "BUFFERED"
+      Cors:
+        AllowCredentials: false
+        AllowHeaders:
+          - "*"
+        AllowMethods:
+          - "*"
+        AllowOrigins:
+          - "*"
+        ExposeHeaders:
+          - "*"
+        MaxAge: 30
+      TargetFunctionArn: !Ref "lambdaFunctionArn6"
+
+
+Outputs:
+  personalizedURL:
+    Description: ""
+    Value: !GetAtt "personalizedURL.FunctionUrl"

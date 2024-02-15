@@ -1,0 +1,21 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "personalize",
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "personalize.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole"
+        },
+        {
+            "Sid": "sagemaker",
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "sagemaker.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole"
+        }
+    ]
+}

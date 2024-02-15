@@ -1,0 +1,36 @@
+.flex_grid{
+    display: flex;
+    overflow-x: scroll;
+    justify-content: space-between;
+  }
+  
+  .card-demo{
+    flex-basis: 20%;
+    height: 240px;
+    margin-right: 385px;
+    flex-shrink: 0;
+    padding-right: 10px;
+    padding-left: 27px;
+    background: #fff;
+    border-radius: 10px;
+  }
+
+.slider-text{
+  color: #333333;
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  align-self: self-end;
+}
+
+.flex{
+  display: flex;
+}
+
+.jsb{
+  justify-content: space-between;
+}
+
+.w-full{
+  width: 100%;
+}

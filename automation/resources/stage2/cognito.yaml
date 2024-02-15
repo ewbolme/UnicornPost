@@ -1,0 +1,308 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: ""
+Parameters:
+  userPoolName:
+    Description: ""
+    Type: "String"
+    Default: "news-recommendation-user-pool"
+
+  clientName:
+    Description: ""
+    Type: "String"
+    Default: "user-pass-client"
+  
+  cognitoDomainName:
+    Description: ""
+    Type: "String"
+
+
+Resources:
+  cognitoUserPool:
+    Type: "AWS::Cognito::UserPool"
+    Properties:
+      UserPoolName: !Ref "userPoolName"
+      Policies: 
+        PasswordPolicy: 
+          MinimumLength: 8
+          RequireUppercase: true
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: true
+          TemporaryPasswordValidityDays: 7
+      LambdaConfig:
+        CustomMessage: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:customMessageForgotPassword"
+      Schema: 
+        - 
+          Name: "sub"
+          AttributeDataType: "String"
+          DeveloperOnlyAttribute: false
+          Mutable: false
+          Required: true
+          StringAttributeConstraints:
+            MinLength: "1"
+            MaxLength: "2048"
+        - 
+          Name: "name"
+          AttributeDataType: "String"
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          Required: true
+          StringAttributeConstraints: 
+            MinLength: "0"
+            MaxLength: "2048"
+        - 
+          Name: "given_name"
+          AttributeDataType: "String"
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          Required: false
+          StringAttributeConstraints: 
+            MinLength: "0"
+            MaxLength: "2048"
+        - 
+          Name: "family_name"
+          AttributeDataType: "String"
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          Required: false
+          StringAttributeConstraints: 
+            MinLength: "0"
+            MaxLength: "2048"
+        - 
+          Name: "middle_name"
+          AttributeDataType: "String"
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          Required: false
+          StringAttributeConstraints: 
+            MinLength: "0"
+            MaxLength: "2048"
+        - 
+          Name: "nickname"
+          AttributeDataType: "String"
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          Required: false
+          StringAttributeConstraints: 
+            MinLength: "0"
+            MaxLength: "2048"
+        - 
+          Name: "preferred_username"
+          AttributeDataType: "String"
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          Required: false
+          StringAttributeConstraints: 
+            MinLength: "0"
+            MaxLength: "2048"
+        - 
+          Name: "profile"
+          AttributeDataType: "String"
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          Required: false
+          StringAttributeConstraints: 
+            MinLength: "0"
+            MaxLength: "2048"
+        - 
+          Name: "picture"
+          AttributeDataType: "String"
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          Required: false
+          StringAttributeConstraints: 
+            MinLength: "0"
+            MaxLength: "2048"
+        - 
+          Name: "website"
+          AttributeDataType: "String"
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          Required: false
+          StringAttributeConstraints: 
+            MinLength: "0"
+            MaxLength: "2048"
+        - 
+          Name: "email"
+          AttributeDataType: "String"
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          Required: true
+          StringAttributeConstraints: 
+            MinLength: "0"
+            MaxLength: "2048"
+        - 
+          Name: "email_verified"
+          AttributeDataType: "Boolean"
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          Required: false
+        - 
+          Name: "gender"
+          AttributeDataType: "String"
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          Required: false
+          StringAttributeConstraints: 
+            MinLength: "0"
+            MaxLength: "2048"
+        - 
+          Name: "birthdate"
+          AttributeDataType: "String"
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          Required: false
+          StringAttributeConstraints: 
+            MinLength: "10"
+            MaxLength: "10"
+        - 
+          Name: "zoneinfo"
+          AttributeDataType: "String"
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          Required: false
+          StringAttributeConstraints: 
+            MinLength: "0"
+            MaxLength: "2048"
+        - 
+          Name: "locale"
+          AttributeDataType: "String"
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          Required: false
+          StringAttributeConstraints: 
+            MinLength: "0"
+            MaxLength: "2048"
+        - 
+          Name: "phone_number"
+          AttributeDataType: "String"
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          Required: false
+          StringAttributeConstraints: 
+            MinLength: "0"
+            MaxLength: "2048"
+        - 
+          Name: "address"
+          AttributeDataType: "String"
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          Required: false
+          StringAttributeConstraints: 
+            MinLength: "0"
+            MaxLength: "2048"
+        - 
+          Name: "updated_at"
+          AttributeDataType: "Number"
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          Required: false
+          NumberAttributeConstraints: 
+            MinValue: "0"
+      AutoVerifiedAttributes: 
+        - "email"
+      AliasAttributes: 
+        - "email"
+        - "preferred_username"
+      MfaConfiguration: "OFF"
+      EmailConfiguration: 
+        EmailSendingAccount: "COGNITO_DEFAULT"
+      AdminCreateUserConfig: 
+        AllowAdminCreateUserOnly: false
+      UserPoolTags: {}
+      AccountRecoverySetting: 
+        RecoveryMechanisms: 
+          - 
+            Priority: 1
+            Name: "verified_email"
+      UsernameConfiguration: 
+        CaseSensitive: false
+      VerificationMessageTemplate: 
+        EmailMessageByLink: |
+          Thankyou for choosing us.
+                      
+          Please verify your email address for Unicorn Post within the next 24 hours, by clicking on this 
+          {##link.##}
+        EmailSubjectByLink: "Welcome to Unicorn Post"
+        DefaultEmailOption: "CONFIRM_WITH_LINK"
+
+
+  cognitoUserPoolClient:
+    Type: "AWS::Cognito::UserPoolClient"
+    Properties:
+      UserPoolId: !Ref "cognitoUserPool"
+      ClientName: !Ref "clientName"
+      RefreshTokenValidity: 30
+      ReadAttributes: 
+        - "address"
+        - "birthdate"
+        - "email"
+        - "email_verified"
+        - "family_name"
+        - "gender"
+        - "given_name"
+        - "locale"
+        - "middle_name"
+        - "name"
+        - "nickname"
+        - "phone_number"
+        - "phone_number_verified"
+        - "picture"
+        - "preferred_username"
+        - "profile"
+        - "updated_at"
+        - "website"
+        - "zoneinfo"
+      WriteAttributes: 
+        - "address"
+        - "birthdate"
+        - "email"
+        - "family_name"
+        - "gender"
+        - "given_name"
+        - "locale"
+        - "middle_name"
+        - "name"
+        - "nickname"
+        - "phone_number"
+        - "picture"
+        - "preferred_username"
+        - "profile"
+        - "updated_at"
+        - "website"
+        - "zoneinfo"
+      ExplicitAuthFlows: 
+        - "ALLOW_REFRESH_TOKEN_AUTH"
+        - "ALLOW_USER_PASSWORD_AUTH"
+      GenerateSecret: true
+      PreventUserExistenceErrors: "ENABLED"
+      AllowedOAuthFlowsUserPoolClient: false
+      IdTokenValidity: 60
+      AccessTokenValidity: 60
+      TokenValidityUnits: 
+        AccessToken: "minutes"
+        IdToken: "minutes"
+        RefreshToken: "days"
+
+
+  cognitoUserPoolDomain:
+    Type: "AWS::Cognito::UserPoolDomain"
+    Properties:
+      Domain: !Ref "cognitoDomainName"
+      UserPoolId: !Ref "cognitoUserPool"
+
+      
+
+
+Outputs:
+  cognitoUserPoolId:
+    Description: ""
+    Value: !Ref "cognitoUserPool"
+
+  userPoolClientId:
+    Description: ""
+    Value: !Ref "cognitoUserPoolClient"
+
+  userPoolClientSecret:
+    Description: ""
+    Value: !GetAtt "cognitoUserPoolClient.ClientSecret"

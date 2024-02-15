@@ -1,0 +1,6 @@
+@font-face {
+    font-family: 'Amazon Ember';
+    src: local('Amazon Ember'), url('./AmazonEmber.ttf') format('truetype'); /* Update the font file path and format */
+    font-weight: normal;
+    font-style: normal;
+  }

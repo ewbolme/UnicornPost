@@ -1,0 +1,393 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: "AWS::Serverless-2016-10-31"
+Parameters:
+  lambdaRoleArn:
+    Type: "String"
+    Description: "Arn for the lambdaRole"
+
+  lambdaLayer:
+    Type: "String"
+    Description: "Lambda Layer"
+
+  kinesisStream:
+    Type: "String"
+    Description: "Kinesis Stream Name"
+
+  lambdaSecurityGroupId:
+    Type: "String"
+    Description: "Lmabda Security Group ID"
+
+  privateSubnetId1:
+    Description: ""
+    Type: "String"
+
+  privateSubnetId2:
+    Description: ""
+    Type: "String"
+
+  privateSubnetId3:
+    Description: ""
+    Type: "String"
+
+  campaignName1:
+    Description: ""
+    Type: "String"
+
+  campaignName2:
+    Description: ""
+    Type: "String"
+
+  filterName:
+    Description: ""
+    Type: "String"
+
+  kmeansEndpointName:
+    Description: ""
+    Type: "String"
+
+  clusterEventTracker:
+    Description: ""
+    Type: "String"
+
+  oneToOneEventTracker:
+    Description: ""
+    Type: "String"
+
+  
+
+
+Resources: 
+  lambdaFunction1:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Description: ''
+      FunctionName: "frontpage-breaking-news-lambda"
+      Handler: "lambda_function.lambda_handler"
+      Architectures:
+        - "x86_64"
+      CodeUri: "../../lambdas/frontpage/frontpage-breaking-news-lambda.zip"
+      MemorySize: 512
+      Role: !Ref "lambdaRoleArn"
+      Runtime: "python3.11"
+      Timeout: 30
+      EphemeralStorage:
+        Size: 1024
+      Environment:
+        Variables:
+          DESIRED_ITEMS: "20"
+          DYNAMO_MAIN_TABLE: "BreakingNewsMainTable"
+          USERPERSONALIZATIONCLUSTERENDPOINT: !Sub "arn:aws:personalize:${AWS::Region}:${AWS::AccountId}:campaign/${campaignName2}"
+      VpcConfig: 
+        SubnetIds:
+          - !Ref "privateSubnetId1"
+          - !Ref "privateSubnetId2"
+          - !Ref "privateSubnetId3"
+        SecurityGroupIds: 
+          - !Ref "lambdaSecurityGroupId"
+      # Tags:
+      #   - Key: Lambda
+      #     Value: MyLambdaFunction
+
+
+  lambdaFunction2:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Description: ''
+      FunctionName: "frontpage-news-for-you-lambda"
+      Handler: "lambda_function.lambda_handler"
+      Architectures:
+        - "x86_64"
+      CodeUri: "../../lambdas/frontpage/frontpage-news-for-you-lambda.zip"
+      MemorySize: 128
+      Role: !Ref "lambdaRoleArn"
+      Runtime: "python3.11"
+      Timeout: 30
+      EphemeralStorage:
+        Size: 512
+      Environment: 
+        Variables: 
+          GENREFILTERARN: !Sub "arn:aws:personalize:${AWS::Region}:${AWS::AccountId}:filter/${filterName}"
+          USERPERSONALIZATIONONETOONEENDPOINT: !Sub "arn:aws:personalize:${AWS::Region}:${AWS::AccountId}:campaign/${campaignName1}"
+          DYNAMO_CLUSTER_LOOKUP_TABLE: "ClusterLookupTable"
+      VpcConfig: 
+        SubnetIds:
+          - !Ref "privateSubnetId1"
+          - !Ref "privateSubnetId2"
+          - !Ref "privateSubnetId3"
+        SecurityGroupIds: 
+          - !Ref "lambdaSecurityGroupId"
+      # Tags:
+      #   - Key: Lambda
+      #     Value: MyLambdaFunction
+
+
+  lambdaFunction3:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Description: ''
+      FunctionName: "new-articles-lambda"
+      Handler: "lambda_function.lambda_handler"
+      Architectures:
+        - "x86_64"
+      CodeUri: "../../lambdas/new-articles/new-articles-lambda.zip"
+      MemorySize: 128
+      Role: !Ref "lambdaRoleArn"
+      Runtime: "python3.11"
+      Timeout: 30
+      Layers:
+        - !Ref "lambdaLayer"
+      EphemeralStorage:
+        Size: 512
+      Environment: 
+        Variables: 
+          LAMBDAFUNCTION: !Ref "lambdaFunction5"
+          KMEANS_ENDPOINT_NAME: !Ref "kmeansEndpointName"
+          DYNAMO_MAIN_TABLE: "BreakingNewsMainTable"
+      VpcConfig: 
+        SubnetIds:
+          - !Ref "privateSubnetId1"
+          - !Ref "privateSubnetId2"
+          - !Ref "privateSubnetId3"
+        SecurityGroupIds: 
+          - !Ref "lambdaSecurityGroupId"
+      # Tags:
+      #   - Key: Lambda
+      #     Value: MyLambdaFunction
+
+
+  lambdaFunction4:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Description: ''
+      FunctionName: "past-interactions-lambda"
+      Handler: "lambda_function.lambda_handler"
+      Architectures:
+        - "x86_64"
+      CodeUri: "../../lambdas/new-articles/past-interactions-lambda.zip"
+      MemorySize: 128
+      Role: !Ref "lambdaRoleArn"
+      Runtime: "python3.11"
+      Timeout: 30
+      EphemeralStorage:
+        Size: 512
+      Environment: 
+        Variables:
+          DESIRED_ITEMS: "20"
+          DYNAMO_CLUSTER_LOOKUP_TABLE: "ClusterLookupTable"
+          DYNAMO_INTERACTION_TABLE: "ArticleUserInteractionsTable"
+      VpcConfig: 
+        SubnetIds:
+          - !Ref "privateSubnetId1"
+          - !Ref "privateSubnetId2"
+          - !Ref "privateSubnetId3"
+        SecurityGroupIds: 
+          - !Ref "lambdaSecurityGroupId"
+      # Tags:
+      #   - Key: Lambda
+      #     Value: MyLambdaFunction
+
+  
+  lambdaFunction5:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Description: ''
+      FunctionName: "new-articles-to-dynamo-lambda"
+      Handler: "lambda_function.lambda_handler"
+      Architectures:
+        - "x86_64"
+      CodeUri: "../../lambdas/new-articles/new-articles-to-dynamo-lambda.zip"
+      MemorySize: 128
+      Role: !Ref "lambdaRoleArn"
+      Runtime: "python3.11"
+      Timeout: 30
+      Layers:
+        - !Ref "lambdaLayer"
+      EphemeralStorage:
+        Size: 512
+      Environment: 
+        Variables: 
+          DYNAMO_MAIN_TABLE: "BreakingNewsMainTable"
+      VpcConfig: 
+        SubnetIds:
+          - !Ref "privateSubnetId1"
+          - !Ref "privateSubnetId2"
+          - !Ref "privateSubnetId3"
+        SecurityGroupIds: 
+          - !Ref "lambdaSecurityGroupId"
+      # Tags:
+      #   - Key: Lambda
+      #     Value: MyLambdaFunction
+
+
+  lambdaFunction6:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Description: ''
+      FunctionName: "personalized-newsletter-lambda"
+      Handler: "lambda_function.lambda_handler"
+      Architectures:
+        - "x86_64"
+      CodeUri: "../../lambdas/personalized-newsletter/personalized-newsletter-lambda.zip"
+      MemorySize: 128
+      Role: !Ref "lambdaRoleArn"
+      Runtime: "python3.11"
+      Timeout: 30
+      Layers:
+        - !Ref "lambdaLayer"
+      EphemeralStorage:
+        Size: 512
+      Environment: 
+        Variables: 
+          DESIRED_ITEMS: "5"
+          DYNAMO_MAIN_TABLE: "BreakingNewsMainTable"
+          USERPERSONALIZATIONCLUSTERENDPOINT: !Sub "arn:aws:personalize:${AWS::Region}:${AWS::AccountId}:campaign/${campaignName2}"
+      VpcConfig: 
+        SubnetIds:
+          - !Ref "privateSubnetId1"
+          - !Ref "privateSubnetId2"
+          - !Ref "privateSubnetId3"
+        SecurityGroupIds: 
+          - !Ref "lambdaSecurityGroupId"
+      # Tags:
+      #   - Key: Lambda
+      #     Value: MyLambdaFunction
+
+
+  lambdaFunction7:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Description: ''
+      FunctionName: "fetch-live-interactions"
+      Handler: "lambda_function.lambda_handler"
+      Architectures:
+        - "x86_64"
+      CodeUri: "../../lambdas/realtime-interactions/fetch-live-interactions.zip"
+      MemorySize: 128
+      Role: !Ref "lambdaRoleArn"
+      Runtime: "python3.11"
+      Timeout: 30
+      EphemeralStorage:
+        Size: 512
+      Environment: 
+        Variables: 
+          KINESISSTREAMNAME: !Ref "kinesisStream"
+      VpcConfig: 
+        SubnetIds:
+          - !Ref "privateSubnetId1"
+          - !Ref "privateSubnetId2"
+          - !Ref "privateSubnetId3"
+        SecurityGroupIds: 
+          - !Ref "lambdaSecurityGroupId"
+      # Tags:
+      #   - Key: Lambda
+      #     Value: MyLambdaFunction
+
+
+  lambdaFunction8:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Description: ''
+      FunctionName: "record-live-interactions"
+      Handler: "lambda_function.lambda_handler"
+      Architectures:
+        - "x86_64"
+      CodeUri: "../../lambdas/realtime-interactions/record-live-interactions.zip"
+      MemorySize: 128
+      Role: !Ref "lambdaRoleArn"
+      Runtime: "python3.11"
+      Timeout: 30
+      EphemeralStorage:
+        Size: 512
+      Environment: 
+        Variables:
+          DESIRED_ITEMS: "20"
+          ONETOONEEVENTTRACKER: !Ref "oneToOneEventTracker"
+          KINESISSTREAMNAME: !Ref "kinesisStream"
+          CLUSTEREVENTTRACKER: !Ref "clusterEventTracker"
+          DYNAMO_CLUSTER_LOOKUP_TABLE: "ClusterLookupTable"
+          DYNAMO_INTERACTION_TABLE: "ArticleUserInteractionsTable"
+      VpcConfig: 
+        SubnetIds:
+          - !Ref "privateSubnetId1"
+          - !Ref "privateSubnetId2"
+          - !Ref "privateSubnetId3"
+        SecurityGroupIds: 
+          - !Ref "lambdaSecurityGroupId"
+      # Tags:
+      #   - Key: Lambda
+      #     Value: MyLambdaFunction
+
+
+
+
+Outputs:
+  lambdaFunction1:
+    Description: ""
+    Value: !Ref "lambdaFunction1"
+
+  lambdaFunctionArn1:
+    Description: ""
+    Value: !GetAtt "lambdaFunction1.Arn"
+
+
+  lambdaFunction2:
+    Description: ""
+    Value: !Ref "lambdaFunction2"
+
+  lambdaFunctionArn2:
+    Description: ""
+    Value: !GetAtt "lambdaFunction2.Arn"
+
+
+  lambdaFunction3:
+    Description: ""
+    Value: !Ref "lambdaFunction3"
+
+  lambdaFunctionArn3:
+    Description: ""
+    Value: !GetAtt "lambdaFunction3.Arn"
+
+
+  lambdaFunction4:
+    Description: ""
+    Value: !Ref "lambdaFunction4"
+
+  lambdaFunctionArn4:
+    Description: ""
+    Value: !GetAtt "lambdaFunction4.Arn"
+
+
+  lambdaFunction5:
+    Description: ""
+    Value: !Ref "lambdaFunction5"
+
+  lambdaFunctionArn5:
+    Description: ""
+    Value: !GetAtt "lambdaFunction5.Arn"
+
+
+  lambdaFunction6:
+    Description: ""
+    Value: !Ref "lambdaFunction6"
+
+  lambdaFunctionArn6:
+    Description: ""
+    Value: !GetAtt "lambdaFunction6.Arn"
+
+
+  lambdaFunction7:
+    Description: ""
+    Value: !Ref "lambdaFunction7"
+
+  lambdaFunctionArn7:
+    Description: ""
+    Value: !GetAtt "lambdaFunction7.Arn"
+
+
+  lambdaFunction8:
+    Description: ""
+    Value: !Ref "lambdaFunction8"
+
+  lambdaFunctionArn8:
+    Description: ""
+    Value: !GetAtt "lambdaFunction8.Arn"

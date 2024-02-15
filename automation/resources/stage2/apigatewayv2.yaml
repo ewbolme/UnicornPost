@@ -1,0 +1,116 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+  apiGatewayV2Api:
+    Type: "AWS::ApiGatewayV2::Api"
+    Properties:
+      Name: "unicorn-websocket"
+      ApiKeySelectionExpression: "$request.header.x-api-key"
+      ProtocolType: "WEBSOCKET"
+      RouteSelectionExpression: "$request.body.action"
+      DisableExecuteApiEndpoint: false
+
+
+  apiGatewayV2Route1:
+    Type: "AWS::ApiGatewayV2::Route"
+    Properties:
+      ApiId: !Ref "apiGatewayV2Api"
+      ApiKeyRequired: false
+      AuthorizationType: "NONE"
+      RouteKey: "$disconnect"
+      Target: !Sub "integrations/${apiGatewayV2Integration1}"
+
+
+  apiGatewayV2Route2:
+    Type: "AWS::ApiGatewayV2::Route"
+    Properties:
+      ApiId: !Ref "apiGatewayV2Api"
+      ApiKeyRequired: false
+      AuthorizationType: "NONE"
+      RouteKey: "$connect"
+      RouteResponseSelectionExpression: "$default"
+      Target: !Sub "integrations/${apiGatewayV2Integration2}"
+
+
+  apiGatewayV2Route3:
+    Type: "AWS::ApiGatewayV2::Route"
+    Properties:
+      ApiId: !Ref "apiGatewayV2Api"
+      ApiKeyRequired: false
+      AuthorizationType: "NONE"
+      RouteKey: "$default"
+      Target: !Sub "integrations/${apiGatewayV2Integration3}"
+
+
+  apiGatewayV2Route4:
+    Type: "AWS::ApiGatewayV2::Route"
+    Properties:
+      ApiId: !Ref "apiGatewayV2Api"
+      ApiKeyRequired: false
+      AuthorizationType: "NONE"
+      RouteKey: "get-report"
+      Target: !Sub "integrations/${apiGatewayV2Integration4}"
+
+
+  apiGatewayV2Integration1:
+    Type: "AWS::ApiGatewayV2::Integration"
+    Properties:
+      ApiId: !Ref apiGatewayV2Api
+      ConnectionType: "INTERNET"
+      ContentHandlingStrategy: "CONVERT_TO_TEXT"
+      IntegrationMethod: "POST"
+      IntegrationType: "AWS_PROXY"
+      IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:personalized-newsletter-websocket/invocations"
+      PassthroughBehavior: "WHEN_NO_MATCH"
+      TimeoutInMillis: 29000
+      PayloadFormatVersion: "1.0"
+
+
+  apiGatewayV2Integration2:
+    Type: "AWS::ApiGatewayV2::Integration"
+    Properties:
+      ApiId: !Ref apiGatewayV2Api
+      ConnectionType: "INTERNET"
+      ContentHandlingStrategy: "CONVERT_TO_TEXT"
+      IntegrationMethod: "POST"
+      IntegrationType: "AWS_PROXY"
+      IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:personalized-newsletter-websocket/invocations"
+      PassthroughBehavior: "WHEN_NO_MATCH"
+      TimeoutInMillis: 29000
+      PayloadFormatVersion: "1.0"
+
+
+  apiGatewayV2Integration3:
+    Type: "AWS::ApiGatewayV2::Integration"
+    Properties:
+      ApiId: !Ref apiGatewayV2Api
+      ConnectionType: "INTERNET"
+      ContentHandlingStrategy: "CONVERT_TO_TEXT"
+      IntegrationMethod: "POST"
+      IntegrationType: "AWS_PROXY"
+      IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:personalized-newsletter-websocket/invocations"
+      PassthroughBehavior: "WHEN_NO_MATCH"
+      TimeoutInMillis: 29000
+      PayloadFormatVersion: "1.0"
+
+
+  apiGatewayV2Integration4:
+    Type: "AWS::ApiGatewayV2::Integration"
+    Properties:
+      ApiId: !Ref apiGatewayV2Api
+      ConnectionType: "INTERNET"
+      ContentHandlingStrategy: "CONVERT_TO_TEXT"
+      IntegrationMethod: "POST"
+      IntegrationType: "AWS_PROXY"
+      IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:personalized-newsletter-websocket/invocations"
+      PassthroughBehavior: "WHEN_NO_MATCH"
+      TimeoutInMillis: 29000
+      PayloadFormatVersion: "1.0"
+
+
+
+
+Outputs:
+  apiGatewayV2Api:
+    Description: "Websocket"
+    Value: !Ref "apiGatewayV2Api"
+    

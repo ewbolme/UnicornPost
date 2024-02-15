@@ -1,0 +1,41 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: ""
+Parameters:
+  privateSubnetId1:
+    Description: ""
+    Type: "String"
+
+  privateSubnetId2:
+    Description: ""
+    Type: "String"
+
+  privateSubnetId3:
+    Description: ""
+    Type: "String"
+
+  rdsSecurityGroupId:
+    Description: ""
+    Type: "String"
+
+
+Resources:
+  redisCache:
+    Type: "AWS::ElastiCache::ServerlessCache"
+    Properties:
+      Description: "Redis Cache for Showmore"
+      Engine: "redis"
+      SecurityGroupIds: 
+        - !Ref "rdsSecurityGroupId"
+      ServerlessCacheName: "unicorn-db-cache2"
+      SubnetIds: 
+        - !Ref "privateSubnetId1"
+        - !Ref "privateSubnetId2"
+        - !Ref "privateSubnetId3"
+
+
+
+
+Outputs:
+  redisCacheEndpoint:
+    Value: !GetAtt "redisCache.Endpoint.Address"
+    Description: "Endpoint of the Redis Cache"

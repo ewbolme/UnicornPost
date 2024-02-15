@@ -1,0 +1,191 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  amplifyPolicy:
+    Type: "String"
+    Description: "Policy for Amplify Role"
+
+  lambdaPolicy:
+    Type: "String"
+    Description: "Policy for ML Lambda Role"
+
+  tableCreationPolicy:
+    Type: "String"
+    Description: "Policy for Table Creation Lambda Role"
+
+  webSocketLambdaPolicy:
+    Type: "String"
+    Description: "Policy for Websocket Lambda Role"
+
+  manageConnectionPolicy:
+    Type: "String"
+    Description: "Policy for Websocket Lambda Role"
+
+Resources: 
+  lambdaRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: !Sub "unicorn-lambda-role-${AWS::Region}"
+      Description: "IAM role for lambdas"
+      Path: "/"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "lambda"
+            Effect: "Allow"
+            Principal:
+              Service:
+                - "lambda.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - !Ref "lambdaPolicy"
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaENIManagementAccess"
+      #   - "arn:aws:iam::aws:policy/AmazonBedrockFullAccess"
+      #   - "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
+      #   - "arn:aws:iam::aws:policy/AmazonKinesisFullAccess"
+      #   - "arn:aws:iam::aws:policy/service-role/AmazonPersonalizeFullAccess"
+      #   - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+      #   - "arn:aws:iam::aws:policy/AmazonSageMakerFullAccess"
+      #   - "arn:aws:iam::aws:policy/CloudWatchFullAccess"
+      #   - "arn:aws:iam::aws:policy/TranslateFullAccess"
+      #   - "arn:aws:iam::aws:policy/AWSLambda_FullAccess"
+
+
+  golambdaRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: !Sub "unicorn-golambda-role-${AWS::Region}"
+      Description: "IAM role for lambdas"
+      Path: "/"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "lambda"
+            Effect: "Allow"
+            Principal:
+              Service:
+                - "lambda.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/AmazonCognitoDeveloperAuthenticatedIdentities"
+        - "arn:aws:iam::aws:policy/AmazonCognitoPowerUser"
+        - "arn:aws:iam::aws:policy/AmazonESCognitoAccess"
+        - "arn:aws:iam::aws:policy/AmazonRDSFullAccess"
+        - "arn:aws:iam::aws:policy/AmazonVPCFullAccess"
+        - "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
+        - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+        - "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaENIManagementAccess"
+        - !Ref "tableCreationPolicy"
+
+  tableCreationRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: !Sub "unicorn-table-creation-role-${AWS::Region}"
+      Path: "/"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "lambda"
+            Effect: "Allow"
+            Principal:
+              Service:
+                - "lambda.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - !Ref "tableCreationPolicy"
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaENIManagementAccess"
+        - "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
+
+
+  webSocketLambdaRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: !Sub "unicorn-websocket-role-${AWS::Region}"
+      Path: "/"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "lambda"
+            Effect: "Allow"
+            Principal:
+              Service:
+                - "lambda.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - !Ref "webSocketLambdaPolicy"
+        - !Ref "manageConnectionPolicy"
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaENIManagementAccess"
+        - "arn:aws:iam::aws:policy/AWSLambda_FullAccess"
+
+
+  amplifyRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: !Sub "unicorn-amplify-codecommit-execution-role-${AWS::Region}"
+      Description: "IAM role for amplify access"
+      Path: "/service-role/"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "amplify"
+            Effect: "Allow"
+            Principal:
+              Service:
+                - "amplify.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      MaxSessionDuration: 3600
+      ManagedPolicyArns:
+        - !Ref "amplifyPolicy"
+
+
+  rdsMonitoringRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: !Sub "rds-monitoring-role-${AWS::Region}"
+      Description: "IAM role for rds monitoring"
+      Path: "/"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "rds"
+            Effect: "Allow"
+            Principal:
+              Service:
+                - "monitoring.rds.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
+
+
+
+
+Outputs:
+  lambdaRoleArn:
+    Description: "Lambda Execution Role"
+    Value: !GetAtt "lambdaRole.Arn"
+
+  amplifyRoleArn:
+    Description: "Lambda Execution Role"
+    Value: !GetAtt "amplifyRole.Arn"
+
+  golambdaRoleArn:
+    Description: "goLambda Execution Role"
+    Value: !GetAtt "golambdaRole.Arn"
+
+  rdsMonitoringRoleArn:
+    Description: "RDS Monitoring Role"
+    Value: !GetAtt "rdsMonitoringRole.Arn"
+
+  tableCreationRoleArn:
+    Description: "Table Creation Lambda Role"
+    Value: !GetAtt "tableCreationRole.Arn"
+
+  webSocketLambdaRoleArn:
+    Description: "Websocket Lambda Role"
+    Value: !GetAtt "webSocketLambdaRole.Arn"

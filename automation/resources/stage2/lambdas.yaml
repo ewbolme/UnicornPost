@@ -1,0 +1,218 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: "AWS::Serverless-2016-10-31"
+Parameters:
+  lambdaLayer2:
+    Type: "String"
+    Description: "Lambda Layer"
+
+  golambdaRoleArn:
+    Type: "String"
+    Description: "Arn for the lambdaRole"
+
+  tableCreationRoleArn:
+    Type: "String"
+    Description: "Arn for the lambdaRole"
+
+  webSocketLambdaRoleArn:
+    Type: "String"
+    Description: "Arn for the lambdaRole"
+
+  apiGatewayRestApi:
+    Type: "String"
+    Description: "Logical ID"
+
+  apiGatewayStage:
+    Type: "String"
+    Description: "Stage Name"
+
+  dbInstanceEndpoint:
+    Type: "String"
+    Description: "RDS Endpoint"
+
+  redisCacheEndpoint:
+    Type: "String"
+    Description: "RDS Endpoint"
+
+  backendBucketName:
+    Type: "String"
+    Description: "Bucket Name for Backend Go Lambda"
+
+  lambdaSecurityGroupId:
+    Type: "String"
+    Description: "Lmabda Security Group ID"
+
+  privateSubnetId1:
+    Description: ""
+    Type: "String"
+
+  privateSubnetId2:
+    Description: ""
+    Type: "String"
+
+  privateSubnetId3:
+    Description: ""
+    Type: "String"
+
+  amplifyUrl:
+    Description: ""
+    Type: "String"
+
+
+Resources:
+  lambdaFunction9:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Description: ""
+      Environment:
+        Variables:
+          REDIS_HOST_PORT: !Join [ ":", [ !Ref "redisCacheEndpoint", "6379" ] ]
+          RDS_HOST: !Ref "dbInstanceEndpoint"
+          RDS_DBNAME: "postgres"
+          REGION_NAME: !Ref "AWS::Region"
+          RDS_PORT: "5432"
+          CONTENT_TYPE: "application/json"
+          ARTICLE_DETAILS_TABLE: "BreakingNewsMainTable"
+          BASE_URL_ML_API: !Sub "https://${apiGatewayRestApi}.execute-api.${AWS::Region}.amazonaws.com/${apiGatewayStage}/"
+          S3_BUCKET_NAME: !Ref "backendBucketName"
+      FunctionName: "news_recommendation_go_apis"
+      Handler: "main"
+      Architectures: 
+        - "x86_64"
+      CodeUri: "../../lambdas/backend/goLambda.zip"
+      MemorySize: 512
+      Role: !Ref "golambdaRoleArn"
+      Runtime: "go1.x"
+      Timeout: 30
+      EphemeralStorage: 
+        Size: 512
+      VpcConfig: 
+        SubnetIds:
+          - !Ref "privateSubnetId1"
+          - !Ref "privateSubnetId2"
+          - !Ref "privateSubnetId3"
+        SecurityGroupIds: 
+          - !Ref "lambdaSecurityGroupId"
+
+
+  lambdaFunction10:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Description: ""
+      FunctionName: "personalized-newsletter-websocket"
+      Handler: "lambda_function.lambda_handler"
+      Architectures: 
+        - "arm64"
+      CodeUri: "../../lambdas/personalized-newsletter/personalized-newsletter-websocket.zip"
+      MemorySize: 128
+      Role: !Ref "webSocketLambdaRoleArn"
+      Runtime: "python3.10"
+      Timeout: 843
+      Layers: 
+        - !Ref "lambdaLayer2"
+      EphemeralStorage: 
+          Size: 512
+      VpcConfig: 
+        SubnetIds:
+          - !Ref "privateSubnetId1"
+          - !Ref "privateSubnetId2"
+          - !Ref "privateSubnetId3"
+        SecurityGroupIds: 
+          - !Ref "lambdaSecurityGroupId"
+
+
+  lambdaFunction11:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      FunctionName: "rds-table-creation-lambda"
+      Description: ""
+      Handler: "lambda_function.lambda_handler"
+      Architectures:
+        - "x86_64"
+      CodeUri: "../../lambdas/table-creation/table-creation.zip"
+      Environment:
+        Variables: 
+          RDS_HOST: !Ref "dbInstanceEndpoint"
+          RDS_DBNAME: "postgres"
+          REGION_NAME: !Ref "AWS::Region"
+          RDS_PORT: "5432"
+      Role: !Ref "tableCreationRoleArn"
+      Runtime: "python3.8"
+      Timeout: 30
+      MemorySize: 128
+      EphemeralStorage:
+        Size: 512
+      VpcConfig: 
+        SubnetIds:
+          - !Ref "privateSubnetId1"
+          - !Ref "privateSubnetId2"
+          - !Ref "privateSubnetId3"
+        SecurityGroupIds: 
+          - !Ref "lambdaSecurityGroupId"
+
+  
+  lambdaFunction12:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Description: ""
+      FunctionName: "customMessageForgotPassword"
+      Handler: "index.handler"
+      Architectures: 
+        - "x86_64"
+      CodeUri: "../../lambdas/backend/customMessageForgotPassword.zip"
+      MemorySize: 128
+      Role: !Ref "tableCreationRoleArn"
+      Runtime: "nodejs20.x"
+      Timeout: 3
+      EphemeralStorage: 
+          Size: 512
+      Environment: 
+        Variables: 
+          RESET_PASSWORD_BASE_URL: !Join [ "", [ "https://master.", !Ref "amplifyUrl" ] ]
+      VpcConfig: 
+        SubnetIds:
+          - !Ref "privateSubnetId1"
+          - !Ref "privateSubnetId2"
+          - !Ref "privateSubnetId3"
+        SecurityGroupIds: 
+          - !Ref "lambdaSecurityGroupId"
+
+
+
+Outputs:
+  goLambdaFunction:
+    Description: ""
+    Value: !Ref "lambdaFunction9"
+
+  goLambdaFunctionArn:
+    Description: ""
+    Value: !GetAtt "lambdaFunction9.Arn"
+
+
+  webSocketLambda:
+    Description: ""
+    Value: !Ref "lambdaFunction10"
+
+  webSocketLambdaArn:
+    Description: ""
+    Value: !GetAtt "lambdaFunction10.Arn"
+
+
+  tableLambda:
+    Description: ""
+    Value: !Ref "lambdaFunction11"
+
+  tableLambdaArn:
+    Description: ""
+    Value: !GetAtt "lambdaFunction11.Arn"
+
+    
+  customMessageForgotPassword:
+    Description: ""
+    Value: !Ref "lambdaFunction12"
+
+  customMessageForgotPasswordArn:
+    Description: ""
+    Value: !GetAtt "lambdaFunction12.Arn"
+
+
+    

@@ -1,0 +1,745 @@
+swagger: '2.0'
+info:
+  version: '1.3.0'
+  title: News Recommendations by AWS APIs
+host: rz2vf941s3.execute-api.us-west-2.amazonaws.com
+basePath: /dev
+schemes:
+  - https
+tags:
+  - name: Front Page
+    description: CRUD operation for the Front Page (Home Page) 
+  - name: New Articles Page
+    description: CRUD operation for the New Articles Page (Second Page) 
+  - name: Personalized Newsletter Page
+    description: CRUD operation for the Personalized Newsletter Page (Third Page) 
+  - name: User Authentication
+    description: APIs for user authentication and authorization
+paths:
+  /login:
+    post:
+      tags:
+      - User Authentication
+      summary: User Login
+      description: Endpoint for user login
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: LoginRequest
+          description: Request body for user login
+          required: true
+          schema:
+            type: object
+            properties:
+              user_email:
+                type: string
+              user_password:
+                type: string
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  expires_in:
+                    type: integer
+                  id_token:
+                    type: string
+                  refresh_token:
+                    type: string
+                  token_type:
+                    type: string
+              error:
+                type: boolean
+              is_confirmed:
+                type: boolean
+              user_email:
+                type: string
+              user_id:
+                type: string
+              user_name:
+                type: string
+        '400':
+          description: Bad Request
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+  /create-user:
+    post:
+      tags:
+      - User Authentication
+      summary: Create User
+      description: Endpoint to create a new user
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: CreateUserRequest
+          description: Request body for creating a new user
+          required: true
+          schema:
+            type: object
+            properties:
+              user_name:
+                type: string
+              user_email:
+                type: string
+              user_password:
+                type: string
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              data:
+                type: string
+              error:
+                type: boolean
+        '400':
+          description: Bad Request
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+  /verify-user:
+    post:
+      tags:
+      - User Authentication
+      summary: Verify User
+      description: Endpoint to verify a user
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: VerifyUserRequest
+          description: Request body for verifying a user
+          required: true
+          schema:
+            type: object
+            properties:
+              user_name:
+                type: string
+              verification_code:
+                type: string
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              data:
+                type: string
+              error:
+                type: boolean
+        '400':
+          description: Bad Request
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+  /forgot-password:
+    post:
+      tags:
+      - User Authentication
+      summary: Forgot Password
+      description: Endpoint for initiating the password reset process
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: ForgotPasswordRequest
+          description: Request body for initiating password reset
+          required: true
+          schema:
+            type: object
+            properties:
+              user_email:
+                type: string
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              data:
+                type: string
+              error:
+                type: boolean
+        '400':
+          description: Bad Request
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+  /reset-password:
+    post:
+      tags:
+      - User Authentication
+      summary: Reset Password
+      description: Endpoint for resetting user password
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: ResetPasswordRequest
+          description: Request body for resetting user password
+          required: true
+          schema:
+            type: object
+            properties:
+              user_email:
+                type: string
+              confirmation_code:
+                type: string
+              user_password:
+                type: string
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              data:
+                type: string
+              error:
+                type: boolean
+        '400':
+          description: Bad Request
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+  /last-articles-by-user:
+    get:
+      tags:
+      - New Articles Page
+      summary: Get Last Articles by User
+      description: Endpoint to get the last articles by a specific user
+      parameters:
+        - in: query
+          name: user_id
+          description: The user ID parameter for retrieving last articles
+          required: true
+          type: string
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    article_id:
+                      type: string
+                    article_title:
+                      type: string
+                    article_hook:
+                      type: string
+                    article_summary:
+                      type: string
+                    posted_on:
+                      type: string
+              error:
+                type: boolean
+              user_id:
+                type: string
+        '400':
+          description: Bad Request
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                
+  /new-article:
+    post:
+      tags: 
+      - New Articles Page 
+      summary: Add a New Article
+      description: Endpoint to add a new article
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: NewArticleRequest
+          description: Request body for a new article
+          required: true
+          schema:
+            type: object
+            properties:
+              data:
+                type: string
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    user_name:
+                      type: string
+                    user_id:
+                      type: string
+                    profile_image_url:
+                      type: string
+              error:
+                type: boolean
+              user_id:
+                type: string
+        '400':
+          description: Bad Request
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+  /breaking-news:
+    get:
+      tags: 
+      - Front Page 
+      summary: Get Breaking News
+      description: Endpoint to get breaking news based on diversity
+      parameters:
+        - in: query
+          name: diversity
+          description: The diversity parameter for breaking news
+          required: true
+          type: integer
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    article_id:
+                      type: string
+                    article_title:
+                      type: string
+                    article_hook:
+                      type: string
+                    article_summary:
+                      type: string
+                    posted_on:
+                      type: string
+              error:
+                type: boolean
+              user_id:
+                type: string
+        '400':
+          description: Bad Request
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+  /news-for-you:
+    get:
+      tags: 
+      - Front Page
+      summary: Get Personalized News
+      description: Endpoint to get personalized news based on genre
+      parameters:
+        - in: query
+          name: genre
+          description: The genre parameter for personalized news
+          required: false
+          type: string
+        - in: query
+          name: page
+          description: See more - The page number required for the pagination. (currently offset is fixed to 20)
+          required: false
+          type: integer
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                    articles:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          article_id:
+                            type: string
+                          article_title:
+                            type: string
+                          article_hook:
+                            type: string
+                          article_summary:
+                            type: string
+                          posted_on:
+                            type: string
+                    more_articles: 
+                      type: boolean
+              error:
+                type: boolean
+              user_id:
+                type: string
+        '400':
+          description: Bad Request
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+  /article-details/{article_id}/{article_cluster_id}:
+    get:
+      tags:
+      - Personalized Newsletter Page
+      summary: Get Article Details
+      description: Endpoint to get details of a specific article
+      parameters:
+        - in: path
+          name: article_id
+          type: string
+          required: true
+          description: The ID of the article
+        - in: path
+          name: article_cluster_id
+          type: string
+          required: true
+          description: The ID of the article cluster
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    article_id:
+                      type: string
+                    article_title:
+                      type: string
+                    article_hook:
+                      type: string
+                    article_summary:
+                      type: string
+                    posted_on:
+                      type: string
+              error:
+                type: boolean
+              user_id:
+                type: string
+        '400':
+          description: Bad Request
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+  /newsletter:
+    post:
+      tags: 
+      - Personalized Newsletter Page
+      summary: Create a Newsletter
+      description: Endpoint to create a personalized newsletter
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: NewsletterRequest
+          description: Request body for a newsletter
+          required: true
+          schema:
+            type: object
+            properties:
+              diversity:
+                type: integer
+              is_gen_ai_enabled:
+                type: boolean
+              prompt_data:
+                type: string
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  email:
+                    type: string
+                  articles:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        article_id:
+                          type: string
+                        article_trigger:
+                          type: string
+                        article_cluster_id:
+                          type: string
+              error:
+                type: boolean
+              user_id:
+                type: string
+        '400':
+          description: Bad Request
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+  /genres:
+    get:
+      tags:
+      - Front Page
+      summary: Get Available Genres
+      description: Endpoint to get available genres
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  genres_available:
+                    type: array
+                    items:
+                      type: string
+              error:
+                type: boolean
+              user_id:
+                type: string
+        '400':
+          description: Bad Request
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+  /user-interactions:
+    post:
+      tags:
+      - New Articles Page
+      summary: Add User Interaction
+      description: Endpoint to add user interactions
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: UserInteractionRequest
+          description: Request body for user interactions
+          required: true
+          schema:
+            type: object
+            properties:
+              user_id:
+                type: string
+              article_id:
+                type: string
+              interaction_timestamp:
+                type: string
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              data:
+                type: string
+              error:
+                type: boolean
+        '400':
+          description: Bad Request
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                
+  /is_reset_password:
+      post:
+        tags:
+        - User Authentication
+        summary: Reset password link validity (same link) - old
+        description: Endpoint to get Is reset flag from DB - for UI
+        consumes:
+          - application/json
+        produces:
+          - application/json
+        parameters:
+          - in: body
+            name: IsResetPasswordRequest
+            description: Request body for Is Reset Password 
+            required: true
+            schema:
+              type: object
+              properties:
+                user_email:
+                  type: string
+        responses:
+          '200':
+            description: Successful response
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    is_reset:
+                      type: boolean
+                error:
+                  type: boolean
+          '400':
+            description: Bad Request
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  
+  /resend-verification-mail:
+    post:
+      tags:
+      - User Authentication
+      summary: To re-send the account verification email for the Signup.
+      description: Endpoint To re-send the account verification email for the Signup.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: ResendVerificationMail
+          description: Request body for Resend Verification Mail
+          required: true
+          schema:
+            type: object
+            properties:
+              user_email:
+                type: string
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              data:
+                type: string
+              error:
+                type: boolean
+        '400':
+          description: Bad Request
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                
+  /verify-reset-password-count:
+    post:
+      tags:
+      - User Authentication
+      summary: Reset password link validity
+      description: Endpoint to check if the reset password email link is valid or is expired.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: IsResetPasswordRequest
+          description: Request body for Is Reset Password 
+          required: true
+          schema:
+            type: object
+            properties:
+              user_email:
+                type: string
+              reset_password_count:
+                type: string
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  to_reset_password:
+                    type: boolean
+              error:
+                type: boolean
+        '400':
+          description: Bad Request
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
