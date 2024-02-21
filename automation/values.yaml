@@ -11,24 +11,25 @@ cognito_domain_name: unicorn-post-domain10
 model_name: kmeans-clustering-model
 kmeans_endpoint_name: article-clusterer-endpoint
 user_interactions_dynamo_table: ArticleUserInteractionsTable
+number_of_article_clusters: 60
 
 
 # Personalize one to one model Variaables
 dataset_group_1: breaking-news-one-to-one-aws
 interactions_schema_name: breakingnews-bedrock-demo-schema-aws
-dataset_1: breakingnews-one-to-one-interactions-aws
+dataset_one_to_one_interactions: breakingnews-one-to-one-interactions-aws
 items_schema_name: breakingnews-one-to-one-items-schema-aws
-dataset_2: breakingnews-one-to-one-items-aws
-solution_1: breakingnews-userpersonalization-one-to-one-aws
-campaign_name_1: breakingnews-userpersonalization-one-to-one-aws
-event_tracker_name_1: BreakingNews-one-to-one-event-tracker-aws
+dataset_one_to_one_items: breakingnews-one-to-one-items-aws
+solution_one_to_one_user_pers: breakingnews-userpersonalization-one-to-one-aws
+campaign_name_one_to_one_user_pers: breakingnews-userpersonalization-one-to-one-aws
+event_tracker_name_one_to_one: BreakingNews-one-to-one-event-tracker-aws
 filter_name: breakingnews-genre-filter-aws
  
 # Personalize clustered model and user affinity model params
-dataset_group_2: breaking-news-cluster-aws
-dataset_3: breakingnews-cluster-interactions-aws
-solution_2: breakingnews-userpersonalization-cluster-aws
-solution_3: breakingnews-usersegmentation-cluster-aws
-campaign_name_2: breakingnews-userpersonalization-cluster-aws
-event_tracker_name_2: breakingnews-clustered-event-tracker-aws
+dataset_group_clustered: breaking-news-cluster-aws
+dataset_clustred_interactions: breakingnews-cluster-interactions-aws
+solution_clustered_user_per: breakingnews-userpersonalization-cluster-aws
+solution_clustered_user_seg: breakingnews-usersegmentation-cluster-aws
+campaign_name_clustered_user_per: breakingnews-userpersonalization-cluster-aws
+event_tracker_name_clustered: breakingnews-clustered-event-tracker-aws
 segmentation_job_name: breakingnews-clustered-segmentation-job

@@ -11,11 +11,11 @@ Parameters:
 
   campaignName1:
     Type: "String"
-    Description: "Personalize Campaign Name"
+    Description: "Personalize Campaign Name for One to One User Personalization"
 
   campaignName2:
     Type: "String"
-    Description: "Personalize Campaign Name"
+    Description: "Personalize Campaign Name for Item Clustered User Personalization"
 
   filterName:
     Type: "String"

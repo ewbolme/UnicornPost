@@ -40,6 +40,7 @@ stack_name=$(yq -e .stack_name values.yaml | tr -d '"')
 role_name=$(echo $(yq -e .role_name values.yaml | tr -d '"')-$(yq -e .region values.yaml | tr -d '"'))
 account_no=$(aws sts get-caller-identity --query Account --output text)
 cognito_domain_name=$(yq -e .cognito_domain_name values.yaml | tr -d '"')
+number_of_article_clusters=$(yq -e .number_of_article_clusters values.yaml | tr -d '"')
 
 
 # Sagemaker
@@ -47,26 +48,28 @@ model_name=$(yq -e .model_name values.yaml | tr -d '"')
 kmeans_endpoint_name=$(yq -e .kmeans_endpoint_name values.yaml | tr -d '"')
 user_interactions_dynamo_table=$(yq -e .user_interactions_dynamo_table values.yaml | tr -d '"')
 
+# Interactions Schema (Shared)
+interactions_schema_name=$(yq -e .interactions_schema_name values.yaml | tr -d '"')
+
 
 # Personalize one to one model
-dataset_group_1=$(yq -e .dataset_group_1 values.yaml | tr -d '"')
-interactions_schema_name=$(yq -e .interactions_schema_name values.yaml | tr -d '"')
-dataset_1=$(yq -e .dataset_1 values.yaml | tr -d '"')
+dataset_group_one_to_one=$(yq -e .dataset_group_1 values.yaml | tr -d '"')
+dataset_one_to_one_interactions=$(yq -e .dataset_one_to_one_interactions values.yaml | tr -d '"')
 items_schema_name=$(yq -e .items_schema_name values.yaml | tr -d '"')
-dataset_2=$(yq -e .dataset_2 values.yaml | tr -d '"')
-solution_1=$(yq -e .solution_1 values.yaml | tr -d '"')
-campaign_name_1=$(yq -e .campaign_name_1 values.yaml | tr -d '"')
-event_tracker_name_1=$(yq -e .event_tracker_name_1 values.yaml | tr -d '"')
+dataset_one_to_one_items=$(yq -e .dataset_one_to_one_items values.yaml | tr -d '"')
+solution_one_to_one_user_pers=$(yq -e .solution_one_to_one_user_pers values.yaml | tr -d '"')
+campaign_name_one_to_one_user_pers=$(yq -e .campaign_name_one_to_one_user_pers values.yaml | tr -d '"')
+event_tracker_name_one_to_one=$(yq -e .event_tracker_name_one_to_one values.yaml | tr -d '"')
 filter_name=$(yq -e .filter_name values.yaml | tr -d '"')
 
 
 # Personalize clustered model and user affinity model params
-dataset_group_2=$(yq -e .dataset_group_2 values.yaml | tr -d '"')
-dataset_3=$(yq -e .dataset_3 values.yaml | tr -d '"')
-solution_2=$(yq -e .solution_2 values.yaml | tr -d '"')
-solution_3=$(yq -e .solution_3 values.yaml | tr -d '"')
-campaign_name_2=$(yq -e .campaign_name_2 values.yaml | tr -d '"')
-event_tracker_name_2=$(yq -e .event_tracker_name_2 values.yaml | tr -d '"')
+dataset_group_clustered=$(yq -e .dataset_group_clustered values.yaml | tr -d '"')
+dataset_clustred_interactions=$(yq -e .dataset_clustred_interactions values.yaml | tr -d '"')
+solution_clustered_user_per=$(yq -e .solution_clustered_user_per values.yaml | tr -d '"')
+solution_clustered_user_seg=$(yq -e .solution_clustered_user_seg values.yaml | tr -d '"')
+campaign_name_clustered_user_per=$(yq -e .campaign_name_clustered_user_per values.yaml | tr -d '"')
+event_tracker_name_clustered=$(yq -e .event_tracker_name_clustered values.yaml | tr -d '"')
 
 #segmentation job name to be defined here
 segmentation_job_name=$(yq -e .segmentation_job_name values.yaml | tr -d '"')
@@ -145,9 +148,9 @@ python3 python_scripts/sagemaker_deployment.py --role $role_name --bucket $bucke
 python3 python_scripts/data_processing1.py --endpoint_name $kmeans_endpoint_name --region $region
 python3 python_scripts/data_processing2.py --bucket $bucket_name
 python3 python_scripts/data_processing3.py --endpoint_name $kmeans_endpoint_name --endpoint_region $region 
-python3 python_scripts/data_processing4.py --region $region --role $role_name --bucket $bucket_name --dataset_group $dataset_group_1 --interactions_schema $interactions_schema_name --interactions_dataset $dataset_1 --items_schema $items_schema_name  --items_dataset $dataset_2  --solution_name $solution_1 --campaign_name $campaign_name_1 --event_tracker_name $event_tracker_name_1 --filter_name $filter_name
-python3 python_scripts/data_processing5.py --region $region --role $role_name --bucket $bucket_name --dataset_group $dataset_group_2 --interactions_schema $interactions_schema_name --interactions_dataset $dataset_3 --segmentation_solution_name $solution_3  --personalization_solution_name $solution_2  --personalization_campaign_name  $campaign_name_2 --event_tracker_name  $event_tracker_name_2
-python3 python_scripts/data_processing6.py --role $role_name --bucket $bucket_name --account $account_no --region $region --user_seg_model_name $solution_3 --job_name $segmentation_job_name
+python3 python_scripts/data_processing4_create_one_to_one.py --region $region --role $role_name --bucket $bucket_name --dataset_group $dataset_group_one_to_one --interactions_schema $interactions_schema_name --interactions_dataset $dataset_one_to_one_interactions --items_schema $items_schema_name  --items_dataset $dataset_one_to_one_items  --solution_name $solution_one_to_one_user_pers --campaign_name $campaign_name_one_to_one_user_pers --event_tracker_name $event_tracker_name_one_to_one --filter_name $filter_name
+python3 python_scripts/data_processing5_create_clustered.py --region $region --role $role_name --bucket $bucket_name --dataset_group $dataset_group_clustered --interactions_schema $interactions_schema_name --interactions_dataset $dataset_clustred_interactions --segmentation_solution_name $solution_clustered_user_seg  --personalization_solution_name $solution_clustered_user_per  --personalization_campaign_name  $campaign_name_clustered_user_per --event_tracker_name  $event_tracker_name_clustered
+python3 python_scripts/data_processing6_cluster_seg_job.py --role $role_name --bucket $bucket_name --account $account_no --region $region --user_seg_model_name $solution_clustered_user_seg --job_name $segmentation_job_name
 python3 python_scripts/data_processing7.py 
 
 
@@ -170,17 +173,17 @@ arn2=$(echo "$json_data" | jq -r '.eventTrackers[1].eventTrackerArn')
  
 
 # Check the name and echo ARN based on the condition
-if [[ $name1 == $event_tracker_name_1 ]] && [[ $name2 == $event_tracker_name_2 ]]; then
-    tracker_id_2=$(aws personalize describe-event-tracker --event-tracker-arn $arn1 --query "eventTracker.trackingId" --output text --region $region)
-    tracker_id_1=$(aws personalize describe-event-tracker --event-tracker-arn $arn2 --query "eventTracker.trackingId" --output text --region $region)
+if [[ $name1 == $event_tracker_name_one_to_one ]] && [[ $name2 == $event_tracker_name_clustered ]]; then
+    tracker_id_one_to_one=$(aws personalize describe-event-tracker --event-tracker-arn $arn1 --query "eventTracker.trackingId" --output text --region $region)
+    tracker_id_clustered=$(aws personalize describe-event-tracker --event-tracker-arn $arn2 --query "eventTracker.trackingId" --output text --region $region)
 
-    echo $tracker_id_1 $tracker_id_2
+    echo $tracker_id_one_to_one $tracker_id_clustered
 
-elif [[ $name1 == $event_tracker_name_2 ]] && [[ $name2 == $event_tracker_name_1 ]]; then
-    tracker_id_1=$(aws personalize describe-event-tracker --event-tracker-arn $arn2 --query "eventTracker.trackingId" --output text --region $region)
-    tracker_id_2=$(aws personalize describe-event-tracker --event-tracker-arn $arn1 --query "eventTracker.trackingId" --output text --region $region)
+elif [[ $name1 == $event_tracker_name_clustered ]] && [[ $name2 == $event_tracker_name_one_to_one ]]; then
+    tracker_id_one_to_one=$(aws personalize describe-event-tracker --event-tracker-arn $arn2 --query "eventTracker.trackingId" --output text --region $region)
+    tracker_id_clustered=$(aws personalize describe-event-tracker --event-tracker-arn $arn1 --query "eventTracker.trackingId" --output text --region $region)
 
-    echo $tracker_id_1 $tracker_id_2
+    echo $tracker_id_one_to_one $tracker_id_clustered
 
 else
     echo "Error"
@@ -196,7 +199,7 @@ sam deploy \
     --s3-bucket $bucket_name \
     --s3-prefix template \
     --region $region \
-    --parameter-overrides bucketName=$bucket_name backendBucketName=$backend_bucket_name campaignName1=$campaign_name_1 campaignName2=$campaign_name_2 filterName=$filter_name kmeansEndpointName=$kmeans_endpoint_name cognitoDomainName=$cognito_domain_name clusterEventTracker=$tracker_id_1 oneToOneEventTracker=$tracker_id_2
+    --parameter-overrides bucketName=$bucket_name backendBucketName=$backend_bucket_name campaignName1=$campaign_name_one_to_one_user_pers campaignName2=$campaign_name_clustered_user_per filterName=$filter_name kmeansEndpointName=$kmeans_endpoint_name cognitoDomainName=$cognito_domain_name clusterEventTracker=$tracker_id_clustered oneToOneEventTracker=$tracker_id_one_to_one
 
 
 # Uploading Data To The DynamoDB Table
