@@ -144,13 +144,13 @@ aws s3 cp s3://personalize-solution-staging-us-east-1/personalize-unicornpost/de
 
 
 # Running the Python Scripts
-python3 python_scripts/sagemaker_deployment.py --role $role_name --bucket $bucket_name --model_name $model_name --endpoint_name $kmeans_endpoint_name --region $region
+python3 python_scripts/sagemaker_deployment.py --role $role_name --bucket $bucket_name --model_name $model_name --endpoint_name $kmeans_endpoint_name --region $region --cluster_number $number_of_article_clusters
 python3 python_scripts/data_processing1.py --endpoint_name $kmeans_endpoint_name --region $region
 python3 python_scripts/data_processing2.py --bucket $bucket_name
 python3 python_scripts/data_processing3.py --endpoint_name $kmeans_endpoint_name --endpoint_region $region 
 python3 python_scripts/data_processing4_create_one_to_one.py --region $region --role $role_name --bucket $bucket_name --dataset_group $dataset_group_one_to_one --interactions_schema $interactions_schema_name --interactions_dataset $dataset_one_to_one_interactions --items_schema $items_schema_name  --items_dataset $dataset_one_to_one_items  --solution_name $solution_one_to_one_user_pers --campaign_name $campaign_name_one_to_one_user_pers --event_tracker_name $event_tracker_name_one_to_one --filter_name $filter_name
 python3 python_scripts/data_processing5_create_clustered.py --region $region --role $role_name --bucket $bucket_name --dataset_group $dataset_group_clustered --interactions_schema $interactions_schema_name --interactions_dataset $dataset_clustred_interactions --segmentation_solution_name $solution_clustered_user_seg  --personalization_solution_name $solution_clustered_user_per  --personalization_campaign_name  $campaign_name_clustered_user_per --event_tracker_name  $event_tracker_name_clustered
-python3 python_scripts/data_processing6_cluster_seg_job.py --role $role_name --bucket $bucket_name --account $account_no --region $region --user_seg_model_name $solution_clustered_user_seg --job_name $segmentation_job_name
+python3 python_scripts/data_processing6_cluster_seg_job.py --role $role_name --bucket $bucket_name --account $account_no --region $region --user_seg_model_name $solution_clustered_user_seg --job_name $segmentation_job_name --cluster_number $number_of_article_clusters
 python3 python_scripts/data_processing7.py 
 
 

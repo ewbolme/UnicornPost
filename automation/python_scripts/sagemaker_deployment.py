@@ -24,6 +24,7 @@ def train_and_deploy_kmeans_clustering_model(args):
         model = args.model_name
         endpoint = args.endpoint_name
         region = args.region
+        num_clusters = args.cluster_number
         logger.info(
             "\nRole given: %s\nBucket name given: %s\nModel name given: %s\nSageMaker endpoint name: %s\nRegion given: %s",
             role,
@@ -40,7 +41,6 @@ def train_and_deploy_kmeans_clustering_model(args):
             "./Data/TranslatedSummarized/deskdrop_articles_for_xenon_old.csv"
         )
 
-        num_clusters = 60
         output_path = "s3://" + bucket_name + "/SagemakerOutput/"
         logger.info("\nSaving to the output path model artifacts: %s", output_path)
 
@@ -117,6 +117,7 @@ if __name__ == "__main__":
     parser.add_argument("--model_name", type=str, help="Model name like k means")
     parser.add_argument("--endpoint_name", type=str, help="Endpoint name to be")
     parser.add_argument("--region", type=str, help="AWS region")
+    parser.add_argument("--cluster_number", type=str, help="AWS region")
     args = parser.parse_args()
 
     train_and_deploy_kmeans_clustering_model(args)

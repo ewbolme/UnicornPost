@@ -22,6 +22,11 @@ parser.add_argument(
     type=str,
     help="name of personalize user segmentation model",
 )
+parser.add_argument(
+    "--cluster_number",
+    type=str,
+    help="Number of clusters in the article segmentation model",
+)
 args = parser.parse_args()
 
 role = args.role
@@ -30,6 +35,7 @@ account_no = args.account
 region = args.region
 user_seg = args.user_seg_model_name
 job_name = args.job_name
+num_clusters = args.cluster_number
 
 print(
     "role given:",
@@ -83,10 +89,6 @@ except Exception as e:
 
 USERSEGMENTATIONCLUSTERSOLUTIONVERSION = latest_version_arn
 print("segementation version its picking:", USERSEGMENTATIONCLUSTERSOLUTIONVERSION)
-
-
-num_clusters = 60
-
 
 cluster_list = []
 item_id_list = []
