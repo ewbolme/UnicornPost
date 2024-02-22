@@ -24,7 +24,7 @@ def train_and_deploy_kmeans_clustering_model(args):
         model = args.model_name
         endpoint = args.endpoint_name
         region = args.region
-        num_clusters = args.cluster_number
+        num_clusters = int(args.cluster_number)
         logger.info(
             "\nRole given: %s\nBucket name given: %s\nModel name given: %s\nSageMaker endpoint name: %s\nRegion given: %s",
             role,

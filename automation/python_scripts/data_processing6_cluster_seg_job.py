@@ -35,7 +35,7 @@ account_no = args.account
 region = args.region
 user_seg = args.user_seg_model_name
 job_name = args.job_name
-num_clusters = args.cluster_number
+num_clusters = int(args.cluster_number)
 
 print(
     "role given:",
