@@ -74,6 +74,10 @@ event_tracker_name_clustered=$(yq -e .event_tracker_name_clustered values.yaml |
 #segmentation job name to be defined here
 segmentation_job_name=$(yq -e .segmentation_job_name values.yaml | tr -d '"')
 
+# data location to be dfined here
+dataset_group_clustered=$(yq -e .dataset_group_clustered values.yaml | tr -d '"')
+dataset_clustred_interactions=$(yq -e .dataset_clustred_interactions values.yaml | tr -d '"')
+solution_clustered_user_per=$(yq -e .solution_clustered_user_per values.yaml | tr -d '"')
 
 # Creating IAM Role
 echo "Creating IAM Role.............................."
@@ -97,7 +101,7 @@ aws s3api create-bucket --bucket $backend_bucket_name --region $region --create-
 fi
 
 
-# Policy Permission
+# Policy Permission for personalize bucket
 policy='
 {
     "Version": "2012-10-17",
@@ -145,13 +149,13 @@ aws s3 cp s3://personalize-solution-staging-us-east-1/personalize-unicornpost/de
 
 # Running the Python Scripts
 python3 python_scripts/sagemaker_deployment.py --role $role_name --bucket $bucket_name --model_name $model_name --endpoint_name $kmeans_endpoint_name --region $region --cluster_number $number_of_article_clusters
-python3 python_scripts/data_processing1.py --endpoint_name $kmeans_endpoint_name --region $region
-python3 python_scripts/data_processing2.py --bucket $bucket_name
-python3 python_scripts/data_processing3.py --endpoint_name $kmeans_endpoint_name --endpoint_region $region 
+python3 python_scripts/data_processing1_cluster_historical_articles.py --endpoint_name $kmeans_endpoint_name --region $region
+python3 python_scripts/data_processing2_process_save_personalize_interactions.py --bucket $bucket_name
+python3 python_scripts/data_processing3_cluster_new_articles.py --endpoint_name $kmeans_endpoint_name --endpoint_region $region 
 python3 python_scripts/data_processing4_create_one_to_one.py --region $region --role $role_name --bucket $bucket_name --dataset_group $dataset_group_one_to_one --interactions_schema $interactions_schema_name --interactions_dataset $dataset_one_to_one_interactions --items_schema $items_schema_name  --items_dataset $dataset_one_to_one_items  --solution_name $solution_one_to_one_user_pers --campaign_name $campaign_name_one_to_one_user_pers --event_tracker_name $event_tracker_name_one_to_one --filter_name $filter_name
 python3 python_scripts/data_processing5_create_clustered.py --region $region --role $role_name --bucket $bucket_name --dataset_group $dataset_group_clustered --interactions_schema $interactions_schema_name --interactions_dataset $dataset_clustred_interactions --segmentation_solution_name $solution_clustered_user_seg  --personalization_solution_name $solution_clustered_user_per  --personalization_campaign_name  $campaign_name_clustered_user_per --event_tracker_name  $event_tracker_name_clustered
 python3 python_scripts/data_processing6_cluster_seg_job.py --role $role_name --bucket $bucket_name --account $account_no --region $region --user_seg_model_name $solution_clustered_user_seg --job_name $segmentation_job_name --cluster_number $number_of_article_clusters
-python3 python_scripts/data_processing7.py 
+python3 python_scripts/data_processing7_store_interactions_for_lookup.py 
 
 
 # Uploading Files to S3 Bucket
