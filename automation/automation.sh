@@ -74,10 +74,10 @@ event_tracker_name_clustered=$(yq -e .event_tracker_name_clustered values.yaml |
 #segmentation job name to be defined here
 segmentation_job_name=$(yq -e .segmentation_job_name values.yaml | tr -d '"')
 
-# data location to be dfined here
-dataset_group_clustered=$(yq -e .dataset_group_clustered values.yaml | tr -d '"')
-dataset_clustred_interactions=$(yq -e .dataset_clustred_interactions values.yaml | tr -d '"')
-solution_clustered_user_per=$(yq -e .solution_clustered_user_per values.yaml | tr -d '"')
+# data location to be defined here
+interactions_data=$(yq -e .interactions_data values.yaml | tr -d '"')
+old_articles=$(yq -e .old_articles values.yaml | tr -d '"')
+breaking_news_articles=$(yq -e .breaking_news_articles values.yaml | tr -d '"')
 
 # Creating IAM Role
 echo "Creating IAM Role.............................."
@@ -142,9 +142,9 @@ aws s3api put-bucket-policy --bucket $bucket_name --policy file://roles/s3_polic
 
 # Downloading The Data From S3 To Run The Python Scripts
 echo "Downloading S3 Files.............................."
-aws s3 cp s3://personalize-solution-staging-us-east-1/personalize-unicornpost/deskdrop_articles_for_xenon_new.csv ./Data/InitialProcessing/deskdrop_articles_for_xenon_new.csv
-aws s3 cp s3://personalize-solution-staging-us-east-1/personalize-unicornpost/deskdrop_articles_for_xenon_old.csv ./Data/TranslatedSummarized/deskdrop_articles_for_xenon_old.csv
-aws s3 cp s3://personalize-solution-staging-us-east-1/personalize-unicornpost/deskdrop_interactions_old.csv ./Data/InitialProcessing/deskdrop_interactions_old.csv 
+aws s3 cp $breaking_news_articles ./Data/InitialProcessing/deskdrop_articles_for_xenon_new.csv
+aws s3 cp $old_articles ./Data/TranslatedSummarized/deskdrop_articles_for_xenon_old.csv
+aws s3 cp $interactions_data ./Data/InitialProcessing/deskdrop_interactions_old.csv 
 
 
 # Running the Python Scripts

@@ -32,4 +32,9 @@ solution_clustered_user_per: breakingnews-userpersonalization-cluster-aws
 solution_clustered_user_seg: breakingnews-usersegmentation-cluster-aws
 campaign_name_clustered_user_per: breakingnews-userpersonalization-cluster-aws
 event_tracker_name_clustered: breakingnews-clustered-event-tracker-aws
-segmentation_job_name: breakingnews-clustered-segmentation-job
+segmentation_job_name: breakingnews-clustered-segmentation-job  
+
+# Location to copy data from
+interactions_data: s3://personalize-solution-staging-us-east-1/personalize-unicornpost/deskdrop_interactions_old.csv
+old_articles: s3://personalize-solution-staging-us-east-1/personalize-unicornpost/deskdrop_articles_for_xenon_old.csv
+breaking_news_articles: s3://personalize-solution-staging-us-east-1/personalize-unicornpost/deskdrop_articles_for_xenon_new.csv
