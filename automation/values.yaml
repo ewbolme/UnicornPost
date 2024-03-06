@@ -1,10 +1,10 @@
 # Cloud Formation Stack Variables
-bucket_name: unicorn-post-automation-bucket-staging-aws
-backend_bucket_name: unicorn-post-automation-backend-bucket-staging-aws
+bucket_name: unicorn-post-automation-bucket-staging-aws-test-a1
+backend_bucket_name: unicorn-post-automation-backend-bucket-staging-aws-test-a1
 stack_name: unicorn-post-automation-aws
 role_name: unicorn-post-sagemaker-role-staging-aws
-region: us-west-2
-cognito_domain_name: unicorn-post-domain10
+region: us-east-1
+cognito_domain_name: unicorn-post-domain10-test-a1
  
  
 # Sagemaker Varibales
@@ -36,5 +36,5 @@ segmentation_job_name: breakingnews-clustered-segmentation-job
 
 # Location to copy data from
 interactions_data: s3://personalize-solution-staging-us-east-1/personalize-unicornpost/deskdrop_interactions_old.csv
-old_articles: s3://personalize-solution-staging-us-east-1/personalize-unicornpost/deskdrop_articles_for_xenon_old.csv
-breaking_news_articles: s3://personalize-solution-staging-us-east-1/personalize-unicornpost/deskdrop_articles_for_xenon_new.csv
+old_articles: s3://personalize-solution-staging-us-east-1/personalize-unicornpost/deskdrop_articles_old_unicorn.csv
+breaking_news_articles: s3://personalize-solution-staging-us-east-1/personalize-unicornpost/deskdrop_articles_new_unicorn.csv
