@@ -51,7 +51,6 @@ user_interactions_dynamo_table=$(yq -e .user_interactions_dynamo_table values.ya
 # Interactions Schema (Shared)
 interactions_schema_name=$(yq -e .interactions_schema_name values.yaml | tr -d '"')
 
-
 # Personalize one to one model
 dataset_group_one_to_one=$(yq -e .dataset_group_1 values.yaml | tr -d '"')
 dataset_one_to_one_interactions=$(yq -e .dataset_one_to_one_interactions values.yaml | tr -d '"')
@@ -101,7 +100,8 @@ aws s3api create-bucket --bucket $backend_bucket_name --region $region --create-
 fi
 
 
-# Policy Permission for personalize bucket
+# Policy Permission for personalize bucket template
+# TODO maybe store this somewhere else?
 policy='
 {
     "Version": "2012-10-17",

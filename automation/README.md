@@ -1,7 +1,7 @@
 
 # Automation Framework
 
-A concise manual on executing the automation script for deploying the complete Unicorn project on AWS.
+A concise manual on executing the automation script for deploying the complete UnicornPost project on AWS.
 
 ## Table of contents
 Informations

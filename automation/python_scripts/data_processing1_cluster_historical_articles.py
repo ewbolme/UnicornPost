@@ -87,6 +87,8 @@ def main():
     articles_old["article_cluster"] = articles_old["article_cluster"].apply(
         lambda x: str(int(float(x)))
     )
+
+    # TODO the code below is not efficient
     articles_old.to_csv("./Data/ArticleClusterAdded/deskdrop_articles.csv", index=False)
 
     df = pd.read_csv("./Data/ArticleClusterAdded/deskdrop_articles.csv")
@@ -116,6 +118,7 @@ def main():
     )
 
     # Save Cluster Lookup Table
+    # TODO does this need its own function?
     save_cluster_lookup_table(df, "./Data/Dynamodb/ClusterLookupTable.csv")
 
     end_time = time.time()
