@@ -75,13 +75,13 @@ Resources:
           BASE_URL_ML_API: !Sub "https://${apiGatewayRestApi}.execute-api.${AWS::Region}.amazonaws.com/${apiGatewayStage}/"
           S3_BUCKET_NAME: !Ref "backendBucketName"
       FunctionName: "news_recommendation_go_apis"
-      Handler: "main"
+      Handler: "bootstrap"
       Architectures: 
         - "x86_64"
       CodeUri: "../../lambdas/backend/goLambda.zip"
       MemorySize: 512
       Role: !Ref "golambdaRoleArn"
-      Runtime: "go1.x"
+      Runtime: "provided.al2"
       Timeout: 30
       EphemeralStorage: 
         Size: 512
